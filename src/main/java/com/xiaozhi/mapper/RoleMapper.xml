@@ -31,7 +31,12 @@
             <if test="roleName != null and roleName != ''">roleName = #{roleName},</if>
             <if test="roleDesc != null and roleDesc != ''">roleDesc = #{roleDesc},</if>
             <if test="voiceName != null and voiceName != ''">voiceName = #{voiceName},</if>
-            <if test="ttsId != null and ttsId != ''">ttsId = #{ttsId},</if>
+            <if test="ttsId != null and ttsId != ''">
+                <choose>
+                    <when test="ttsId == -1">ttsId = null,</when>
+                    <otherwise>ttsId = #{ttsId},</otherwise>
+                </choose>
+            </if>
             <if test="state != null and state != ''">state = #{state},</if>
         </set>
         WHERE

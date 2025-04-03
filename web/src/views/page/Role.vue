@@ -810,7 +810,8 @@ export default {
               url,
               data: {
                 roleId: this.editingRoleId,
-                ...formData
+                ...formData,
+                ttsId: formData.provider === 'edge' ? -1 : formData.ttsId
               }
             })
             .then(res => {
