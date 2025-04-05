@@ -3,11 +3,11 @@ package com.xiaozhi.controller;
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 import com.github.pagehelper.PageInfo;
 import com.xiaozhi.common.web.AjaxResult;
 import com.xiaozhi.entity.SysConfig;
+import com.xiaozhi.entity.SysUser;
 import com.xiaozhi.service.SysConfigService;
 import com.xiaozhi.utils.CmsUtils;
 
@@ -17,9 +17,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ServerWebExchange;
+
+import reactor.core.publisher.Mono;
 
 /**
- * 设备管理
+ * 配置管理
  * 
  * @author Joey
  * 
@@ -41,18 +44,24 @@ public class ConfigController {
      * @return configList
      */
     @GetMapping("/query")
-    public AjaxResult query(SysConfig config, HttpServletRequest request) {
-        try {
-            config.setUserId(CmsUtils.getUserId(request));
-            List<SysConfig> deviceList = configService.query(config);
-            AjaxResult result = AjaxResult.success();
-            result.put("data", new PageInfo<>(deviceList));
-            return result;
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            return AjaxResult.error();
-        }
-
+    public Mono<AjaxResult> query(SysConfig config, ServerWebExchange exchange) {
+        return Mono.fromCallable(() -> {
+            try {
+                // 从请求属性中获取用户信息
+                SysUser user = exchange.getAttribute(CmsUtils.USER_ATTRIBUTE_KEY);
+                if (user != null) {
+                    config.setUserId(user.getUserId());
+                }
+                
+                List<SysConfig> configList = configService.query(config);
+                AjaxResult result = AjaxResult.success();
+                result.put("data", new PageInfo<>(configList));
+                return result;
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                return AjaxResult.error();
+            }
+        });
     }
 
     /**
@@ -62,15 +71,16 @@ public class ConfigController {
      * @return
      */
     @PostMapping("/update")
-    public AjaxResult update(SysConfig config, HttpServletRequest request) {
-        try {
-            configService.update(config);
-            return AjaxResult.success();
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            return AjaxResult.error();
-        }
-
+    public Mono<AjaxResult> update(SysConfig config, ServerWebExchange exchange) {
+        return Mono.fromCallable(() -> {
+            try {
+                configService.update(config);
+                return AjaxResult.success();
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                return AjaxResult.error();
+            }
+        });
     }
 
     /**
@@ -79,15 +89,21 @@ public class ConfigController {
      * @param config
      */
     @PostMapping("/add")
-    public AjaxResult add(SysConfig config, HttpServletRequest request) {
-        try {
-            config.setUserId(CmsUtils.getUserId(request));
-            configService.add(config);
-            return AjaxResult.success();
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            return AjaxResult.error();
-        }
+    public Mono<AjaxResult> add(SysConfig config, ServerWebExchange exchange) {
+        return Mono.fromCallable(() -> {
+            try {
+                // 从请求属性中获取用户信息
+                SysUser user = exchange.getAttribute(CmsUtils.USER_ATTRIBUTE_KEY);
+                if (user != null) {
+                    config.setUserId(user.getUserId());
+                }
+                
+                configService.add(config);
+                return AjaxResult.success();
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                return AjaxResult.error();
+            }
+        });
     }
-
 }

@@ -4,22 +4,25 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
 
-import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.web.server.ServerWebExchange;
 
 import com.xiaozhi.entity.SysUser;
-import org.apache.commons.lang3.StringUtils;
 
 public class CmsUtils {
-    public static SysUser getUser(HttpServletRequest request) {
-        return (SysUser) request.getAttribute("user");
+    
+    public static final String USER_ATTRIBUTE_KEY = "user";
+    
+    public static SysUser getUser(ServerWebExchange exchange) {
+        return exchange.getAttribute(USER_ATTRIBUTE_KEY);
     }
 
-    public static void setUser(HttpServletRequest request, SysUser user) {
-        request.setAttribute("user", user);
+    public static void setUser(ServerWebExchange exchange, SysUser user) {
+        exchange.getAttributes().put(USER_ATTRIBUTE_KEY, user);
     }
 
-    public static Integer getUserId(HttpServletRequest request) {
-        SysUser user = getUser(request);
+    public static Integer getUserId(ServerWebExchange exchange) {
+        SysUser user = getUser(exchange);
         if (user != null) {
             return user.getUserId();
         } else {
@@ -27,8 +30,8 @@ public class CmsUtils {
         }
     }
 
-    public static String getUsername(HttpServletRequest request) {
-        SysUser user = getUser(request);
+    public static String getUsername(ServerWebExchange exchange) {
+        SysUser user = getUser(exchange);
         if (user != null) {
             return user.getUsername();
         } else {
@@ -36,8 +39,8 @@ public class CmsUtils {
         }
     }
 
-    public static String getName(HttpServletRequest request) {
-        SysUser user = getUser(request);
+    public static String getName(ServerWebExchange exchange) {
+        SysUser user = getUser(exchange);
         if (user != null) {
             return user.getName();
         } else {
@@ -51,20 +54,21 @@ public class CmsUtils {
      * 在一般情况下使用Request.getRemoteAddr()即可，但是经过nginx等反向代理软件后，这个方法会失效。
      *
      * 本方法先从Header中获取X-Real-IP，如果不存在再从X-Forwarded-For获得第一个IP(用,分割)，
-     * 如果还不存在则调用Request .getRemoteAddr()。
+     * 如果还不存在则调用Request.getRemoteAddr()。
      *
-     * @param request
-     * @return
+     * @param exchange ServerWebExchange
+     * @return IP地址
      */
-    public static String getIpAddr(HttpServletRequest request) {
-        String ip = request.getHeader("X-Real-IP");
+    public static String getIpAddr(ServerWebExchange exchange) {
+        String ip = exchange.getRequest().getHeaders().getFirst("X-Real-IP");
         if (!StringUtils.isBlank(ip) && !"unknown".equalsIgnoreCase(ip)) {
             if (ip.contains("../") || ip.contains("..\\")) {
                 return "";
             }
             return ip;
         }
-        ip = request.getHeader("X-Forwarded-For");
+        
+        ip = exchange.getRequest().getHeaders().getFirst("X-Forwarded-For");
         if (!StringUtils.isBlank(ip) && !"unknown".equalsIgnoreCase(ip)) {
             // 多次反向代理后会有多个IP值，第一个为真实IP。
             int index = ip.indexOf(',');
@@ -76,7 +80,7 @@ public class CmsUtils {
             }
             return ip;
         } else {
-            ip = request.getRemoteAddr();
+            ip = exchange.getRequest().getRemoteAddress().getHostString();
             if (ip.contains("../") || ip.contains("..\\")) {
                 return "";
             }
@@ -85,16 +89,14 @@ public class CmsUtils {
             }
             return ip;
         }
-
     }
 
     /**
      * 获取本机局域网IP地址
      *
-     * @return
+     * @return 本地IP地址
      */
-
-     public static String getLocalIPAddress() {
+    public static String getLocalIPAddress() {
         try {
             // 获取所有网络接口
             Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
@@ -138,7 +140,7 @@ public class CmsUtils {
     }
 
     // 检查是否是私有 IP 地址
-    private static boolean isPrivateIP(String ipAddress) {
+    public static boolean isPrivateIP(String ipAddress) {
         return ipAddress.startsWith("192.168.") || ipAddress.startsWith("10.") ||
                ipAddress.startsWith("172.16.") || ipAddress.startsWith("172.17.") ||
                ipAddress.startsWith("172.18.") || ipAddress.startsWith("172.19.") ||
@@ -149,5 +151,4 @@ public class CmsUtils {
                ipAddress.startsWith("172.28.") || ipAddress.startsWith("172.29.") ||
                ipAddress.startsWith("172.30.") || ipAddress.startsWith("172.31.");
     }
-
 }

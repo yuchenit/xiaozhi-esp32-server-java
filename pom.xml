@@ -62,7 +62,7 @@
         <!-- WebSocket -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-websocket</artifactId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
         <!-- Edge TTS -->
         <dependency>

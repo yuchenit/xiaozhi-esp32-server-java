@@ -31,7 +31,6 @@ public class TtsServiceFactory {
     public TtsService getDefaultTtsService() {
         // 如果缓存中没有默认服务，则创建一个
         TtsService edgeService = new EdgeTtsService(DEFAULT_VOICE, outputPath);
-        logger.info("创建默认Edge TTS服务");
 
         return edgeService;
     }
@@ -76,8 +75,6 @@ public class TtsServiceFactory {
     private TtsService createApiService(SysConfig config, String voiceName, String outputPath) {
         String provider = config.getProvider();
 
-        logger.info("创建 {} TTS服务", provider);
-
         // 如果是Edge，直接返回Edge服务
         if (DEFAULT_PROVIDER.equals(provider)) {
             return new EdgeTtsService(voiceName, outputPath);
@@ -85,9 +82,11 @@ public class TtsServiceFactory {
             return new AliyunTtsService(config, voiceName, outputPath);
         } else if ("volcengine".equals(provider)) {
             return new VolcengineTtsService(config, voiceName, outputPath);
-        }/*  else if ("tencent".equals(provider)) {
-            return new TencentTtsService(config, voiceName, outputPath);
-        } */
+        } /*
+           * else if ("tencent".equals(provider)) {
+           * return new TencentTtsService(config, voiceName, outputPath);
+           * }
+           */
 
         logger.warn("不支持的TTS服务提供商: {}", provider);
         return null;

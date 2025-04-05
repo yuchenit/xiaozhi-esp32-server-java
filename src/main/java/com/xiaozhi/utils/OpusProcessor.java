@@ -1,4 +1,4 @@
-package com.xiaozhi.websocket.audio.processor;
+package com.xiaozhi.utils;
 
 import io.github.jaredmdobson.concentus.OpusEncoder;
 import io.github.jaredmdobson.concentus.OpusApplication;

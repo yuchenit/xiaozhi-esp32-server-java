@@ -1,4 +1,4 @@
-package com.xiaozhi.websocket.llm.providers.openai;
+package com.xiaozhi.websocket.llm.providers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.xiaozhi.websocket.llm.api.AbstractLlmService;
@@ -51,7 +51,9 @@ public class OpenAiService extends AbstractLlmService {
             }
 
             String responseBody = response.body().string();
-            Map<String, Object> responseMap = objectMapper.readValue(responseBody, new TypeReference<Map<String, Object>>() {});
+            Map<String, Object> responseMap = objectMapper.readValue(responseBody,
+                    new TypeReference<Map<String, Object>>() {
+                    });
 
             List<Map<String, Object>> choices = (List<Map<String, Object>>) responseMap.get("choices");
             if (choices != null && !choices.isEmpty()) {
@@ -126,7 +128,9 @@ public class OpenAiService extends AbstractLlmService {
                         if (line.startsWith("data: ")) {
                             String jsonData = line.substring(6);
                             try {
-                                Map<String, Object> data = objectMapper.readValue(jsonData, new TypeReference<Map<String, Object>>() {});
+                                Map<String, Object> data = objectMapper.readValue(jsonData,
+                                        new TypeReference<Map<String, Object>>() {
+                                        });
                                 List<Map<String, Object>> choices = (List<Map<String, Object>>) data.get("choices");
                                 if (choices != null && !choices.isEmpty()) {
                                     Map<String, Object> delta = (Map<String, Object>) choices.get(0).get("delta");

@@ -1,4 +1,4 @@
-package com.xiaozhi.websocket.llm.providers.qwen;
+package com.xiaozhi.websocket.llm.providers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.xiaozhi.websocket.llm.api.AbstractLlmService;
@@ -52,7 +52,9 @@ public class QwenService extends AbstractLlmService {
             }
 
             String responseBody = response.body().string();
-            Map<String, Object> responseMap = objectMapper.readValue(responseBody, new TypeReference<Map<String, Object>>() {});
+            Map<String, Object> responseMap = objectMapper.readValue(responseBody,
+                    new TypeReference<Map<String, Object>>() {
+                    });
 
             // 通义千问API响应格式解析
             Map<String, Object> output = (Map<String, Object>) responseMap.get("output");
@@ -125,13 +127,15 @@ public class QwenService extends AbstractLlmService {
                         if (line.startsWith("data: ")) {
                             String jsonData = line.substring(6);
                             try {
-                                Map<String, Object> data = objectMapper.readValue(jsonData, new TypeReference<Map<String, Object>>() {});
+                                Map<String, Object> data = objectMapper.readValue(jsonData,
+                                        new TypeReference<Map<String, Object>>() {
+                                        });
                                 List<Map<String, Object>> choices = (List<Map<String, Object>>) data.get("choices");
-                                
+
                                 if (choices != null && !choices.isEmpty()) {
                                     Map<String, Object> choice = choices.get(0);
                                     Map<String, Object> delta = (Map<String, Object>) choice.get("delta");
-                                    
+
                                     if (delta != null && delta.containsKey("content")) {
                                         String content = (String) delta.get("content");
                                         if (content != null && !content.isEmpty()) {
@@ -139,7 +143,7 @@ public class QwenService extends AbstractLlmService {
                                             fullResponse.append(content);
                                         }
                                     }
-                                    
+
                                     // 检查是否完成
                                     String finishReason = (String) choice.get("finish_reason");
                                     if ("stop".equals(finishReason)) {

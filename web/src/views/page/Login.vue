@@ -178,7 +178,7 @@ export default {
         if (valid) {
           this.loading = true
           axios
-            .post({
+            .jsonPost({
               url: api.user.login,
               data: {
                 ...this.loginForm

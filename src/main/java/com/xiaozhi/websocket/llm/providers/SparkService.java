@@ -1,4 +1,4 @@
-package com.xiaozhi.websocket.llm.providers.spark;
+package com.xiaozhi.websocket.llm.providers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.xiaozhi.websocket.llm.api.AbstractLlmService;
@@ -67,7 +67,9 @@ public class SparkService extends AbstractLlmService {
                 }
 
                 String responseBody = response.body().string();
-                Map<String, Object> responseMap = objectMapper.readValue(responseBody, new TypeReference<Map<String, Object>>() {});
+                Map<String, Object> responseMap = objectMapper.readValue(responseBody,
+                        new TypeReference<Map<String, Object>>() {
+                        });
 
                 // 解析星火API响应
                 Map<String, Object> responsePayload = (Map<String, Object>) responseMap.get("payload");
@@ -151,7 +153,9 @@ public class SparkService extends AbstractLlmService {
                                 String jsonData = line.substring(6);
 
                                 try {
-                                    Map<String, Object> data = objectMapper.readValue(jsonData, new TypeReference<Map<String, Object>>() {});
+                                    Map<String, Object> data = objectMapper.readValue(jsonData,
+                                            new TypeReference<Map<String, Object>>() {
+                                            });
 
                                     // 解析内容
                                     List<Map<String, Object>> choices = (List<Map<String, Object>>) data.get("choices");

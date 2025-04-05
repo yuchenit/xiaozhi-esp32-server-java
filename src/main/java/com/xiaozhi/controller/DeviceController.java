@@ -1,27 +1,30 @@
 package com.xiaozhi.controller;
 
-import java.io.BufferedReader;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageInfo;
 import com.xiaozhi.common.web.AjaxResult;
 import com.xiaozhi.entity.SysDevice;
+import com.xiaozhi.entity.SysUser;
 import com.xiaozhi.service.SysDeviceService;
 import com.xiaozhi.utils.CmsUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ServerWebExchange;
+
+import reactor.core.publisher.Mono;
 
 /**
  * 设备管理
@@ -38,6 +41,8 @@ public class DeviceController {
 
     @Resource
     private SysDeviceService deviceService;
+    
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
      * 设备查询
@@ -46,18 +51,24 @@ public class DeviceController {
      * @return deviceList
      */
     @GetMapping("/query")
-    public AjaxResult query(SysDevice device, HttpServletRequest request) {
-        try {
-            device.setUserId(CmsUtils.getUserId(request));
-            List<SysDevice> deviceList = deviceService.query(device);
-            AjaxResult result = AjaxResult.success();
-            result.put("data", new PageInfo<>(deviceList));
-            return result;
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            return AjaxResult.error();
-        }
-
+    public Mono<AjaxResult> query(SysDevice device, ServerWebExchange exchange) {
+        return Mono.fromCallable(() -> {
+            try {
+                // 从请求属性中获取用户信息
+                SysUser user = exchange.getAttribute(CmsUtils.USER_ATTRIBUTE_KEY);
+                if (user != null) {
+                    device.setUserId(user.getUserId());
+                }
+                
+                List<SysDevice> deviceList = deviceService.query(device);
+                AjaxResult result = AjaxResult.success();
+                result.put("data", new PageInfo<>(deviceList));
+                return result;
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                return AjaxResult.error();
+            }
+        });
     }
 
     /**
@@ -67,15 +78,16 @@ public class DeviceController {
      * @return
      */
     @PostMapping("/update")
-    public AjaxResult update(SysDevice device, HttpServletRequest request) {
-        try {
-            deviceService.update(device);
-            return AjaxResult.success();
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            return AjaxResult.error();
-        }
-
+    public Mono<AjaxResult> update(SysDevice device, ServerWebExchange exchange) {
+        return Mono.fromCallable(() -> {
+            try {
+                deviceService.update(device);
+                return AjaxResult.success();
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                return AjaxResult.error();
+            }
+        });
     }
 
     /**
@@ -84,82 +96,93 @@ public class DeviceController {
      * @param code
      */
     @PostMapping("/add")
-    public AjaxResult add(String code, HttpServletRequest request) {
-        try {
-            SysDevice device = new SysDevice();
-            device.setCode(code);
-            SysDevice query = deviceService.queryVerifyCode(device);
-            if (query == null) {
-                return AjaxResult.error("无效验证码");
+    public Mono<AjaxResult> add(String code, ServerWebExchange exchange) {
+        return Mono.fromCallable(() -> {
+            try {
+                SysDevice device = new SysDevice();
+                device.setCode(code);
+                SysDevice query = deviceService.queryVerifyCode(device);
+                if (query == null) {
+                    return AjaxResult.error("无效验证码");
+                }
+                
+                // 从请求属性中获取用户信息
+                SysUser user = exchange.getAttribute(CmsUtils.USER_ATTRIBUTE_KEY);
+                if (user != null) {
+                    device.setUserId(user.getUserId());
+                }
+                
+                device.setDeviceId(query.getDeviceId());
+                device.setDeviceName("小智");
+                deviceService.add(device);
+                return AjaxResult.success();
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                return AjaxResult.error();
             }
-            device.setUserId(CmsUtils.getUserId(request));
-            device.setDeviceId(query.getDeviceId());
-            device.setDeviceName("小智");
-            deviceService.add(device);
-            return AjaxResult.success();
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            return AjaxResult.error();
-        }
+        });
     }
 
     @PostMapping("/ota")
-    public void ota(HttpServletRequest request) {
-        try {
-
-            SysDevice device = new SysDevice();
-
-            // 获取device-id请求头
-            String deviceId = request.getHeader("device-id");
-            if (deviceId != null) {
-                device.setDeviceId(deviceId);
-            }
-
-            // 读取请求体内容
-            StringBuilder requestBody = new StringBuilder();
-            BufferedReader reader = request.getReader();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                requestBody.append(line);
-            }
-
-            // 解析JSON请求体
-            if (request.getContentType() != null && request.getContentType().contains("application/json")) {
-                ObjectMapper mapper = new ObjectMapper();
-                Map<String, Object> jsonData = mapper.readValue(requestBody.toString(), 
-                                                new TypeReference<Map<String, Object>>() {});
-
-                // 提取chip_model_name
-                if (jsonData.containsKey("chip_model_name")) {
-                    device.setChipModelName((String) jsonData.get("chip_model_name"));
-                }
-
-                // 提取application.version
-                if (jsonData.containsKey("application") && jsonData.get("application") instanceof Map) {
-                    Map<String, Object> application = (Map<String, Object>) jsonData.get("application");
-                    if (application.containsKey("version")) {
-                        device.setVersion((String) application.get("version"));
-                    }
-                }
-
-                // 提取board中的ssid和ip
-                if (jsonData.containsKey("board") && jsonData.get("board") instanceof Map) {
-                    Map<String, Object> board = (Map<String, Object>) jsonData.get("board");
-                    if (board.containsKey("ssid")) {
-                        device.setWifiName((String) board.get("ssid"));
-                    }
-                    if (board.containsKey("ip")) {
-                        device.setIp((String) board.get("ip"));
-                    }
-                }
-            }
-
-            device.setState("1");
-            device.setLastLogin(new Date().toString());
-            deviceService.update(device);
-
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
+    public Mono<Void> ota(ServerWebExchange exchange) {
+        // 获取device-Id请求头
+        String deviceId = exchange.getRequest().getHeaders().getFirst("device-Id");
+        SysDevice device = new SysDevice();
+        if (deviceId != null) {
+            device.setDeviceId(deviceId);
         }
+        
+        // 读取请求体内容
+        return DataBufferUtils.join(exchange.getRequest().getBody())
+                .flatMap(dataBuffer -> {
+                    try {
+                        byte[] bytes = new byte[dataBuffer.readableByteCount()];
+                        dataBuffer.read(bytes);
+                        DataBufferUtils.release(dataBuffer);
+                        
+                        String requestBody = new String(bytes);
+                        
+                        // 解析JSON请求体
+                        if (exchange.getRequest().getHeaders().getContentType() != null && 
+                            exchange.getRequest().getHeaders().getContentType().toString().contains("application/json")) {
+                            
+                            Map<String, Object> jsonData = objectMapper.readValue(requestBody, 
+                                                        new TypeReference<Map<String, Object>>() {});
+
+                            // 提取chip_model_name
+                            if (jsonData.containsKey("chip_model_name")) {
+                                device.setChipModelName((String) jsonData.get("chip_model_name"));
+                            }
+
+                            // 提取application.version
+                            if (jsonData.containsKey("application") && jsonData.get("application") instanceof Map) {
+                                Map<String, Object> application = (Map<String, Object>) jsonData.get("application");
+                                if (application.containsKey("version")) {
+                                    device.setVersion((String) application.get("version"));
+                                }
+                            }
+
+                            // 提取board中的ssid和ip
+                            if (jsonData.containsKey("board") && jsonData.get("board") instanceof Map) {
+                                Map<String, Object> board = (Map<String, Object>) jsonData.get("board");
+                                if (board.containsKey("ssid")) {
+                                    device.setWifiName((String) board.get("ssid"));
+                                }
+                                if (board.containsKey("ip")) {
+                                    device.setIp((String) board.get("ip"));
+                                }
+                            }
+                        }
+
+                        device.setState("1");
+                        device.setLastLogin(new Date().toString());
+                        deviceService.update(device);
+                        
+                        return Mono.empty();
+                    } catch (Exception e) {
+                        log.error(e.getMessage(), e);
+                        return Mono.error(e);
+                    }
+                });
     }
 }

@@ -5,9 +5,6 @@ audio/*.mp3
 audio/*.vtt
 vosk*
 
-# =============================
-# IDE 和编辑器
-# =============================
 # IntelliJ IDEA
 .idea/
 *.iml

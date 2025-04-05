@@ -7,7 +7,7 @@ import org.springframework.util.ObjectUtils;
 /**
  * API返回封装
  * 
- * @author xiaozhi
+ * @author Joey
  */
 public class AjaxResult extends HashMap<String, Object> {
     private static final long serialVersionUID = 1L;

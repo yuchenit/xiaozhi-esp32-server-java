@@ -1,4 +1,4 @@
-package com.xiaozhi.websocket.llm.providers.ollama;
+package com.xiaozhi.websocket.llm.providers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.xiaozhi.websocket.llm.api.AbstractLlmService;
@@ -50,7 +50,9 @@ public class OllamaService extends AbstractLlmService {
             }
 
             String responseBody = response.body().string();
-            Map<String, Object> responseMap = objectMapper.readValue(responseBody, new TypeReference<Map<String, Object>>() {});
+            Map<String, Object> responseMap = objectMapper.readValue(responseBody,
+                    new TypeReference<Map<String, Object>>() {
+                    });
 
             Map<String, Object> message = (Map<String, Object>) responseMap.get("message");
             if (message != null) {
@@ -119,7 +121,9 @@ public class OllamaService extends AbstractLlmService {
                             continue;
                         }
                         try {
-                            Map<String, Object> data = objectMapper.readValue(line, new TypeReference<Map<String, Object>>() {});
+                            Map<String, Object> data = objectMapper.readValue(line,
+                                    new TypeReference<Map<String, Object>>() {
+                                    });
                             if (data.containsKey("message")) {
                                 Map<String, Object> message = (Map<String, Object>) data.get("message");
                                 if (message != null && message.containsKey("content")) {

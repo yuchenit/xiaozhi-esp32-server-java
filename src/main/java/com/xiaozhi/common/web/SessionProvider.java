@@ -2,20 +2,37 @@ package com.xiaozhi.common.web;
 
 import java.io.Serializable;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.springframework.web.server.ServerWebExchange;
+
+import reactor.core.publisher.Mono;
 
 /**
  * Session提供者
  */
 public interface SessionProvider {
-	public Serializable getAttribute(HttpServletRequest request, String name);
-
-	public void setAttribute(HttpServletRequest request, HttpServletResponse response, String name, Serializable value);
-
-	public String getSessionId(HttpServletRequest request, HttpServletResponse response);
-
-	public void logout(HttpServletRequest request, HttpServletResponse response);
-
-	public void removeAttribute(HttpServletRequest request, String name);
+    
+    /**
+     * 获取会话属性
+     */
+    Mono<Serializable> getAttribute(ServerWebExchange exchange, String name);
+    
+    /**
+     * 设置会话属性
+     */
+    Mono<Void> setAttribute(ServerWebExchange exchange, String name, Serializable value);
+    
+    /**
+     * 获取会话ID
+     */
+    Mono<String> getSessionId(ServerWebExchange exchange);
+    
+    /**
+     * 登出
+     */
+    Mono<Void> logout(ServerWebExchange exchange);
+    
+    /**
+     * 移除会话属性
+     */
+    Mono<Void> removeAttribute(ServerWebExchange exchange, String name);
 }

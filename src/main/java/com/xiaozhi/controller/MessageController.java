@@ -9,11 +9,13 @@ import com.xiaozhi.utils.CmsUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ServerWebExchange;
 
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+
+import reactor.core.publisher.Mono;
 
 /**
  * @Author: Joey
@@ -36,18 +38,23 @@ public class MessageController {
      * @return
      */
     @GetMapping("/query")
-    public AjaxResult query(SysMessage message, HttpServletRequest request) {
-        try {
-            message.setUserId(CmsUtils.getUserId(request));
-            List<SysMessage> messageList = messageService.query(message);
-            AjaxResult result = AjaxResult.success();
-            result.put("data", new PageInfo<>(messageList));
-            return result;
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            return AjaxResult.error();
-        }
-
+    public Mono<AjaxResult> query(SysMessage message, ServerWebExchange exchange) {
+        return Mono.fromCallable(() -> {
+            try {
+                // 从请求属性中获取用户信息
+                SysUser user = exchange.getAttribute(CmsUtils.USER_ATTRIBUTE_KEY);
+                if (user != null) {
+                    message.setUserId(user.getUserId());
+                }
+                
+                List<SysMessage> messageList = messageService.query(message);
+                AjaxResult result = AjaxResult.success();
+                result.put("data", new PageInfo<>(messageList));
+                return result;
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                return AjaxResult.error();
+            }
+        });
     }
-
 }

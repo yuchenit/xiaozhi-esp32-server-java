@@ -14,9 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 
 /**
- * 报名操作
+ * 聊天记录
  *
- * @author xiaozhi
+ * @author Joey
  *
  */
 
