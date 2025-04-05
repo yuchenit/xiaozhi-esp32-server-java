@@ -3,6 +3,7 @@ package com.xiaozhi.websocket.handler;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
 import io.netty.util.IllegalReferenceCountException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,10 +30,17 @@ public class WebSocketExceptionHandler extends ChannelInboundHandlerAdapter {
     logger.error("WebSocket处理异常 - SessionId: {}, DeviceId: {}, 异常: {}",
         sessionId, deviceId, cause.getMessage(), cause);
 
-    // 根据异常类型决定是否关闭连接
+    // 1. 仅在致命异常时关闭连接
     if (isFatalException(cause)) {
-      logger.warn("关闭异常连接 - SessionId: {}", sessionId);
-      ctx.close();
+      // 2. 发送 WebSocket 关闭帧（优雅关闭）
+      ctx.writeAndFlush(new CloseWebSocketFrame(1000, "Internal Server Error"))
+              .addListener(f -> {
+                if (f.isSuccess()) {
+                  ctx.close();
+                } else {
+                  ctx.close();
+                }
+              });
     }
   }
 

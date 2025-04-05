@@ -7,6 +7,7 @@ import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -31,9 +32,6 @@ public class AudioService {
     // 默认音频采样率和通道数
     private static final int DEFAULT_SAMPLE_RATE = 16000;
     private static final int DEFAULT_CHANNELS = 1;
-    // 创建线程池用于异步发送音频和预处理
-    private final ExecutorService audioSenderExecutor = Executors.newCachedThreadPool();
-    private final ExecutorService audioPreprocessExecutor = Executors.newCachedThreadPool();
 
     // 为每个会话维护一个音频发送队列
     private final Map<String, Queue<ProcessedAudioTask>> audioQueues = new ConcurrentHashMap<>();
@@ -46,6 +44,10 @@ public class AudioService {
 
     @Autowired
     private OpusProcessor opusProcessor;
+
+    @Autowired
+    @Qualifier("baseThreadPool")
+    private ExecutorService baseThreadPool;
 
     /**
      * 已处理的音频任务类，包含已转码的音频数据
@@ -147,7 +149,8 @@ public class AudioService {
         long durationMs = calculateDuration(pcmData, sampleRate, channels);
 
         // 转换为Opus格式
-        List<byte[]> opusFrames = opusProcessor.convertPcmToOpus(pcmData, sampleRate, channels, FRAME_DURATION_MS);
+        List<byte[]> opusFrames = opusProcessor.convertPcmToOpus(pcmData,
+                sampleRate, channels, FRAME_DURATION_MS);
 
         return new AudioProcessResult(opusFrames, durationMs);
     }
@@ -225,6 +228,7 @@ public class AudioService {
             boolean isLastText) {
 
         if (channel == null || !channel.isActive()) {
+            logger.info("sendAudio 通道不活跃，无法发送音频");
             return;
         }
 
@@ -234,10 +238,11 @@ public class AudioService {
         initializeSession(sessionId);
 
         // 异步预处理音频
-        audioPreprocessExecutor.submit(() -> {
+        baseThreadPool.submit(() -> {
             try {
                 // 预处理音频文件
-                AudioProcessResult result = processAudioFile(audioFilePath, DEFAULT_SAMPLE_RATE, DEFAULT_CHANNELS);
+                AudioProcessResult result = processAudioFile(audioFilePath,
+                        DEFAULT_SAMPLE_RATE, DEFAULT_CHANNELS);
 
                 // 创建已处理的音频任务
                 ProcessedAudioTask task = new ProcessedAudioTask(
@@ -285,7 +290,7 @@ public class AudioService {
         }
 
         // 异步处理音频任务
-        audioSenderExecutor.submit(() -> {
+        baseThreadPool.submit(() -> {
             try {
                 sendSentenceStart(channel, task.getText());
 
@@ -297,8 +302,11 @@ public class AudioService {
                 long playPosition = 0;
 
                 for (int i = 0; i < opusFrames.size(); i++) {
-                    byte[] frame = opusFrames.get(i);
-
+                    if (!channel.isActive()) {
+                        logger.info("会话已关闭，停止发送音频");
+                        cleanupSession(sessionId);
+                        return;
+                    }
                     // 计算预期发送时间（纳秒）
                     long expectedTime = startTime + (playPosition * 1_000_000);
                     long currentTime = System.nanoTime();
@@ -309,25 +317,16 @@ public class AudioService {
                         // 转换为毫秒和纳秒余数
                         long delayMillis = delayNanos / 1_000_000;
                         int delayNanosRemainder = (int) (delayNanos % 1_000_000);
-
                         if (delayMillis > 0 || delayNanosRemainder > 0) {
                             Thread.sleep(delayMillis, delayNanosRemainder);
                         }
                     }
-
-                    // 再次检查会话是否仍然打开
-                    if (channel.isActive()) {
-                        // 直接发送Opus帧
-                        ByteBuf buf = Unpooled.wrappedBuffer(frame);
-                        channel.writeAndFlush(buf);
-
-                        // 更新播放位置（毫秒）
-                        playPosition += FRAME_DURATION_MS;
-                    } else {
-                        logger.info("会话已关闭，停止发送音频");
-                        cleanupSession(sessionId);
-                        return;
-                    }
+                    byte[] frame = opusFrames.get(i);
+                    // 直接发送Opus帧
+                    ByteBuf buf = Unpooled.wrappedBuffer(frame);
+                    channel.writeAndFlush(buf);
+                    // 更新播放位置（毫秒）
+                    playPosition += FRAME_DURATION_MS;
                 }
 
                 // 删除音频文件
@@ -430,7 +429,7 @@ public class AudioService {
 
             // 异步删除文件
             if (!filesToDelete.isEmpty()) {
-                audioPreprocessExecutor.submit(() -> {
+                baseThreadPool.submit(() -> {
                     filesToDelete.forEach(this::deleteAudioFiles);
                 });
             }

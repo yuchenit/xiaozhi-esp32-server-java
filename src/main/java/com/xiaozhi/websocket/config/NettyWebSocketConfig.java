@@ -50,6 +50,9 @@ public class NettyWebSocketConfig {
     @Value("${netty.websocket.idleTimeout:300}")
     private int idleTimeout;
 
+    @Value("${netty.websocket.writeIdleTimeout:120}")
+    private int writeIdleTimeout;
+
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
 
@@ -92,14 +95,14 @@ public class NettyWebSocketConfig {
                                     // WebSocket压缩支持
                                     .addLast(new WebSocketServerCompressionHandler())
                                     // 空闲连接检测
-                                    .addLast(new IdleStateHandler(idleTimeout, idleTimeout, idleTimeout,
-                                            TimeUnit.SECONDS))
+                                    .addLast(new IdleStateHandler(idleTimeout, idleTimeout,
+                                            idleTimeout, TimeUnit.SECONDS))
                                     // 心跳处理
                                     .addLast(new WebSocketHeartbeatHandler())
-                                    // WebSocket控制帧处理
-                                    .addLast(new WebSocketControlFrameHandler())
                                     // WebSocket文本帧处理
                                     .addLast(new TextWebSocketFrameHandler())
+                                    // WebSocket控制帧处理
+                                    .addLast(new WebSocketControlFrameHandler())
                                     // WebSocket二进制帧处理
                                     .addLast(new BinaryWebSocketFrameHandler())
                                     // 异常处理（放在最后捕获所有未处理的异常）

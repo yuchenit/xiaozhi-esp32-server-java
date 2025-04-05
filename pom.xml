@@ -82,17 +82,31 @@
             <artifactId>concentus</artifactId>
             <version>1.0.2</version>
         </dependency>
-        <!-- 音频操作 -->
+        <!--javacv 音频操作-->
         <dependency>
             <groupId>org.bytedeco</groupId>
             <artifactId>javacv</artifactId>
             <version>1.5.9</version>
+            <exclusions>
+                <!-- 只排除明确不需要的模块 -->
+                <exclusion>
+                    <groupId>org.bytedeco</groupId>
+                    <artifactId>opencv</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.bytedeco</groupId>
+                    <artifactId>flycapture</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.bytedeco</groupId>
             <artifactId>ffmpeg</artifactId>
             <version>6.0-1.5.9</version>
+            <classifier>windows-x86_64</classifier>
+<!--            <classifier>linux-x86_64</classifier>-->
         </dependency>
+        <!---->
         <!-- Vosk -->
         <dependency>
             <groupId>com.alphacephei</groupId>

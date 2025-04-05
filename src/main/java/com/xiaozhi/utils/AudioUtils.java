@@ -1,21 +1,27 @@
 package com.xiaozhi.utils;
 
+import org.bytedeco.ffmpeg.global.avcodec;
+import org.bytedeco.ffmpeg.global.avutil;
+import org.bytedeco.javacpp.Loader;
+import org.bytedeco.javacv.FFmpegFrameRecorder;
+import org.bytedeco.javacv.Frame;
+import org.bytedeco.javacv.FrameRecorder;
+import org.slf4j.Logger;
+
 import java.io.ByteArrayInputStream;
 import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.UUID;
 
-import org.bytedeco.ffmpeg.global.avcodec;
-import org.bytedeco.ffmpeg.global.avutil;
-import org.bytedeco.javacv.FFmpegFrameRecorder;
-import org.bytedeco.javacv.Frame;
-import org.bytedeco.javacv.FrameRecorder;
-import org.slf4j.Logger;
-
 public class AudioUtils {
     public static final String AUDIO_PATH = "audio/";
     private static final Logger logger = org.slf4j.LoggerFactory.getLogger(AudioUtils.class);
+
+    // 添加静态初始化块加载本地库
+    static {
+        Loader.load(org.bytedeco.ffmpeg.global.avutil.class);
+    }
 
     /**
      * 将原始音频数据保存为MP3文件
@@ -31,9 +37,8 @@ public class AudioUtils {
         int sampleRate = 16000; // 采样率
         int channels = 1; // 单声道
 
-        try {
+        try(FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(filePath, channels)) {
             // 创建内存中的帧记录器，直接输出到MP3文件
-            FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(filePath, channels);
             recorder.setAudioChannels(channels);
             recorder.setSampleRate(sampleRate);
             recorder.setAudioCodec(avcodec.AV_CODEC_ID_MP3);
@@ -80,7 +85,7 @@ public class AudioUtils {
     /**
      * 将原始音频数据保存为WAV文件
      * 
-     * @param audio 音频数据
+     * @param audioData 音频数据
      * @return 文件名
      *
      */

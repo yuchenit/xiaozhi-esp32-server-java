@@ -46,7 +46,7 @@ public class BinaryWebSocketFrameHandler extends SimpleChannelInboundHandler<Bin
   private final ObjectMapper objectMapper = new ObjectMapper();
 
   @Override
-  protected void channelRead0(ChannelHandlerContext ctx, BinaryWebSocketFrame frame) throws Exception {
+  protected void channelRead0(ChannelHandlerContext ctx, BinaryWebSocketFrame frame) {
     String sessionId = ctx.channel().attr(SESSION_ID).get();
 
     // 检查会话是否处于监听状态，如果不是则忽略音频数据
@@ -72,15 +72,16 @@ public class BinaryWebSocketFrameHandler extends SimpleChannelInboundHandler<Bin
       ttsConfig = configService.selectConfigById(device.getTtsId());
     }
 
-    ByteBuf content = frame.content();
-    byte[] opusData = new byte[content.readableBytes()];
-    content.readBytes(opusData);
-
+    ByteBuf content = frame.content().retain();  // 显式 retain
     try {
+      byte[] opusData = new byte[content.readableBytes()];
+      content.readBytes(opusData);
       // 处理音频数据
       processAudioData(ctx, sessionId, device, sttConfig, ttsConfig, opusData);
     } catch (Exception e) {
       logger.error("处理二进制消息失败", e);
+    }finally {
+      content.release();  // 确保释放
     }
   }
 

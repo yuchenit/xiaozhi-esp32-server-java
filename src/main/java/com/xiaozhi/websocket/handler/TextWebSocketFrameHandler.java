@@ -13,7 +13,6 @@ import com.xiaozhi.websocket.service.TextToSpeechService;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
-import io.netty.util.ReferenceCountUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -108,7 +107,6 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
       }
     } catch (Exception e) {
       logger.error("处理消息失败", e);
-      ReferenceCountUtil.release(frame);
     }
   }
 
@@ -166,10 +164,10 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
    */
   private void handleHelloMessage(ChannelHandlerContext ctx, JsonNode jsonNode) {
     String sessionId = ctx.channel().attr(SESSION_ID).get();
-    logger.info("收到hello消息 - SessionId: {}", sessionId);
+    logger.info("收到hello消息 - SessionId: {}, JsonNode={}", sessionId,jsonNode);
 
     // 验证客户端hello消息
-    /*if (!jsonNode.path("transport").asText().equals("websocket")) {
+ /*   if (!jsonNode.path("transport").asText().equals("websocket")) {
       logger.warn("不支持的传输方式: {}", jsonNode.path("transport").asText());
       ctx.close();
       return;
