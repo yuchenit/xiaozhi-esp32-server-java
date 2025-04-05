@@ -114,6 +114,7 @@ public class AudioService {
      */
     public void initializeSession(String sessionId) {
         // 初始化音频队列和处理状态
+        logger.info("初始化音频队列和处理状态,sessionId = {}",sessionId);
         audioQueues.computeIfAbsent(sessionId, k -> new LinkedBlockingQueue<>());
         isProcessingMap.putIfAbsent(sessionId, false);
     }
@@ -123,8 +124,10 @@ public class AudioService {
      */
     public void cleanupSession(String sessionId) {
         // 清理音频队列
-        Queue<ProcessedAudioTask> queue = audioQueues.get(sessionId);
+        logger.info("清理会话的音频处理状态,sessionId={}",sessionId);
+        BlockingQueue<ProcessedAudioTask> queue = audioQueues.get(sessionId);
         if (queue != null) {
+            // 清空队列
             queue.clear();
         }
         audioQueues.remove(sessionId);
@@ -226,7 +229,7 @@ public class AudioService {
      */
     public void sendAudio(Channel channel, String audioFilePath, String text, boolean isFirstText,
             boolean isLastText) {
-
+        logger.info("将音频添加到发送队列异步发送,text={},audioFilePath={}",text,audioFilePath);
         if (channel == null || !channel.isActive()) {
             logger.info("sendAudio 通道不活跃，无法发送音频");
             return;
@@ -254,12 +257,13 @@ public class AudioService {
 
                 // 添加到发送队列
                 audioQueues.get(sessionId).add(task);
-                // 发送开始信号和句子开始信号
                 if (isFirstText) {
+                    logger.info("发送开始信号开始信号,sessionId={}",sessionId);
                     sendStart(channel);
                 }
                 // 如果当前没有处理任务,开始处理,设为true,(多线程安全)
-                if (isProcessingMap.putIfAbsent(sessionId, true) == null) {
+                if (Boolean.FALSE.equals(isProcessingMap.putIfAbsent(sessionId, true))) {
+                    logger.info("开始处理音频任务, sessionId: {},text={}", sessionId,text);
                     processNextAudio(channel);
                 }
             } catch (Exception e) {
@@ -274,6 +278,7 @@ public class AudioService {
      * 处理队列中的下一个音频任务
      */
     private void processNextAudio(Channel channel) {
+        logger.info("处理队列中的下一个音频任务");
         String sessionId = channel.attr(SESSION_ID).get();
         BlockingQueue<ProcessedAudioTask> queue = audioQueues.get(sessionId);
 
@@ -294,6 +299,7 @@ public class AudioService {
         logger.info("异步处理音频任务,sessionId = {}",sessionId);
         baseThreadPool.submit(() -> {
             try {
+                logger.info("发送句子开始信号,sessionId={}",sessionId);
                 sendSentenceStart(channel, task.getText());
 
                 // 获取已处理的Opus帧
@@ -410,18 +416,17 @@ public class AudioService {
      * 发送TTS停止指令，同时清空音频队列并中断当前发送
      */
     public void sendStop(Channel channel) {
-        if (channel == null) {
-            logger.warn("尝试发送停止指令到空的Channel");
-            return;
-        }
-
-        String sessionId = channel.attr(SESSION_ID).get();
-
         // 发送停止指令
         messageService.sendMessage(channel, "tts", "stop");
 
         // 清空音频队列
-        Queue<ProcessedAudioTask> queue = audioQueues.get(sessionId);
+        if (channel == null) {
+            logger.warn("尝试发送停止指令到空的Channel");
+            return;
+        }
+        String sessionId = channel.attr(SESSION_ID).get();
+
+        BlockingQueue<ProcessedAudioTask> queue = audioQueues.get(sessionId);
         if (queue != null) {
             // 保存需要删除的音频文件路径
             Queue<String> filesToDelete = new ConcurrentLinkedQueue<>();
@@ -441,5 +446,8 @@ public class AudioService {
                 });
             }
         }
+
+        audioQueues.remove(sessionId);
+        isProcessingMap.remove(sessionId);
     }
 }
