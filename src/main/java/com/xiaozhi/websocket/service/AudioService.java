@@ -1,28 +1,24 @@
 package com.xiaozhi.websocket.service;
 
 import com.xiaozhi.websocket.audio.processor.OpusProcessor;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.Channel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.annotation.Resource;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import static com.xiaozhi.websocket.handler.WebSocketHandshakeHandler.SESSION_ID;
 
 @Service
 public class AudioService {
@@ -211,7 +207,7 @@ public class AudioService {
     /**
      * 简化版本的发送音频方法
      */
-    public void sendAudio(Channel channel, String audioFilePath, String text) throws Exception {
+    public void sendAudio(Channel channel, String audioFilePath, String text) {
         sendAudio(channel, audioFilePath, text, true, true);
     }
 
@@ -226,13 +222,13 @@ public class AudioService {
      * @param isLastText    是否是最后一段文本
      */
     public void sendAudio(Channel channel, String audioFilePath, String text, boolean isFirstText,
-            boolean isLastText) throws Exception {
+            boolean isLastText) {
 
         if (channel == null || !channel.isActive()) {
             return;
         }
 
-        String sessionId = channel.id().asLongText();
+        String sessionId = channel.attr(SESSION_ID).get();
 
         // 确保会话已初始化
         initializeSession(sessionId);
@@ -271,7 +267,7 @@ public class AudioService {
      * 处理队列中的下一个音频任务
      */
     private void processNextAudio(Channel channel) {
-        String sessionId = channel.id().asLongText();
+        String sessionId = channel.attr(SESSION_ID).get();
         Queue<ProcessedAudioTask> queue = audioQueues.get(sessionId);
 
         if (queue == null) {
@@ -413,7 +409,7 @@ public class AudioService {
             return;
         }
 
-        String sessionId = channel.id().asLongText();
+        String sessionId = channel.attr(SESSION_ID).get();
 
         // 发送停止指令
         messageService.sendMessage(channel, "tts", "stop");

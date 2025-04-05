@@ -53,10 +53,10 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
   private final ObjectMapper objectMapper = new ObjectMapper();
 
   // 用于存储所有连接的会话
-  private static final ConcurrentHashMap<String, SysDevice> DEVICES_CONFIG = new ConcurrentHashMap<>();
+  public static final ConcurrentHashMap<String, SysDevice> DEVICES_CONFIG = new ConcurrentHashMap<>();
 
   // 用于跟踪会话是否处于监听状态
-  private static final Map<String, Boolean> LISTENING_STATE = new ConcurrentHashMap<>();
+  public static final Map<String, Boolean> LISTENING_STATE = new ConcurrentHashMap<>();
 
   @Override
   public void channelActive(ChannelHandlerContext ctx) throws Exception {
@@ -87,29 +87,12 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 
   @Override
   protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame frame) throws Exception {
-    String sessionId = ctx.channel().attr(SESSION_ID).get();
-    String deviceId = ctx.channel().attr(DEVICE_ID).get();
-    SysDevice device = DEVICES_CONFIG.get(sessionId);
-
-    // 如果设备配置为空，可能是首次连接，需要初始化
-    if (device == null) {
-      initializeDeviceSession(ctx, sessionId, deviceId);
-      device = DEVICES_CONFIG.get(sessionId);
-    }
-
-    String payload = frame.text();
-
-    // 验证设备是否已绑定
-    List<SysDevice> deviceResult = deviceService
-        .query(new SysDevice().setDeviceId(device.getDeviceId()).setSessionId(sessionId));
-
-    if (deviceResult.isEmpty()) {
-      handleUnboundDevice(ctx, device);
-      return;
-    }
-
-    // 解析JSON消息
     try {
+      // 初始化设备信息
+      initializeDeviceSession(ctx);
+      // 解析JSON消息
+      String payload = frame.text();
+      logger.info("客户端发送消息：msg={}",payload);
       JsonNode jsonNode = objectMapper.readTree(payload);
       String messageType = jsonNode.path("type").asText();
 
@@ -138,44 +121,50 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
   /**
    * 初始化设备会话
    */
-  private void initializeDeviceSession(ChannelHandlerContext ctx, String sessionId, String deviceId) {
+  private void initializeDeviceSession(ChannelHandlerContext ctx) {
+    String sessionId = ctx.channel().attr(SESSION_ID).get();
+    String deviceId = ctx.channel().attr(DEVICE_ID).get();
     List<SysDevice> devices = deviceService.query(new SysDevice().setDeviceId(deviceId));
     SysDevice device;
     if (devices.isEmpty()) {
       device = new SysDevice();
       device.setDeviceId(deviceId);
       device.setSessionId(sessionId);
+      handleUnboundDevice(ctx, device);
     } else {
       device = devices.get(0);
       device.setSessionId(sessionId);
+      deviceService
+              .update(new SysDevice().setDeviceId(device.getDeviceId()).setState("1")
+                      .setLastLogin(new Date().toString()));
     }
     DEVICES_CONFIG.put(sessionId, device);
     LISTENING_STATE.put(sessionId, false);
 
     logger.info("WebSocket连接初始化 - SessionId: {}, DeviceId: {}", sessionId, deviceId);
-
-    deviceService
-        .update(new SysDevice().setDeviceId(device.getDeviceId()).setState("1")
-            .setLastLogin(new Date().toString()));
   }
 
   /**
    * 处理未绑定的设备
    */
-  private void handleUnboundDevice(ChannelHandlerContext ctx, SysDevice device) throws Exception {
-    SysDevice codeResult = deviceService.generateCode(device);
-    String audioFilePath;
-    if (!StringUtils.hasText(codeResult.getAudioPath())) {
-      audioFilePath = textToSpeechService.textToSpeech("请到设备管理页面添加设备，输入验证码" + codeResult.getCode());
-      codeResult.setDeviceId(device.getDeviceId());
-      codeResult.setSessionId(device.getSessionId());
-      codeResult.setAudioPath(audioFilePath);
-      deviceService.updateCode(codeResult);
-    } else {
-      audioFilePath = codeResult.getAudioPath();
+  private void handleUnboundDevice(ChannelHandlerContext ctx, SysDevice device) {
+    try {
+      SysDevice codeResult = deviceService.generateCode(device);
+      String audioFilePath;
+      if (!StringUtils.hasText(codeResult.getAudioPath())) {
+        audioFilePath = textToSpeechService.textToSpeech("请到设备管理页面添加设备，输入验证码" + codeResult.getCode());
+        codeResult.setDeviceId(device.getDeviceId());
+        codeResult.setSessionId(device.getSessionId());
+        codeResult.setAudioPath(audioFilePath);
+        deviceService.updateCode(codeResult);
+      } else {
+        audioFilePath = codeResult.getAudioPath();
+      }
+      logger.info("设备未绑定，返回验证码");
+      audioService.sendAudio(ctx.channel(), audioFilePath, codeResult.getCode());
+    }catch (Exception e){
+      logger.error("handleUnboundDevice error:",e);
     }
-    logger.info("设备未绑定，返回验证码");
-    audioService.sendAudio(ctx.channel(), audioFilePath, codeResult.getCode());
   }
 
   /**
@@ -206,6 +195,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
     ObjectNode response = objectMapper.createObjectNode();
     response.put("type", "hello");
     response.put("transport", "websocket");
+    response.put("session_id", sessionId);
 
     // 添加音频参数（可以根据服务器配置调整）
     ObjectNode responseAudioParams = response.putObject("audio_params");

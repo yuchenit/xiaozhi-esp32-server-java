@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -44,7 +45,7 @@ public class DatabaseChatMemory implements ChatMemory {
             message.setSender(sender);
             message.setMessage(content);
             message.setRoleId(roleId);
-            if (sender == "assistant") {
+            if (Objects.equals(sender, "assistant")) {
                 message.setAudioPath(textToSpeechService.textToSpeech(content));
             }
             messageService.add(message);

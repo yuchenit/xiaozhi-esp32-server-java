@@ -25,8 +25,8 @@ public class WebSocketExceptionHandler extends ChannelInboundHandlerAdapter {
     String sessionId = ctx.channel().attr(SESSION_ID).get();
     String deviceId = ctx.channel().attr(DEVICE_ID).get();
 
-    logger.error("WebSocket处理异常 - SessionId: {}, DeviceId: {}, 异常: {}",
-        sessionId, deviceId, cause.getMessage(), cause);
+    /*logger.error("WebSocket处理异常 - SessionId: {}, DeviceId: {}, 异常: {}",
+        sessionId, deviceId, cause.getMessage(), cause);*/
 
     // 根据异常类型决定是否关闭连接
     if (isFatalException(cause)) {

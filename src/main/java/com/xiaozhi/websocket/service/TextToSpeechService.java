@@ -17,9 +17,9 @@ public class TextToSpeechService {
     private TtsServiceFactory ttsServiceFactory;
 
     public String textToSpeech(String message) throws Exception {
-        // 获取默认TTS服务
-        TtsService ttsService = ttsServiceFactory.getTtsService();
         try {
+            // 获取默认TTS服务
+            TtsService ttsService = ttsServiceFactory.getTtsService();
             // 使用TTS服务将文本转换为语音
             return ttsService.textToSpeech(message);
         } catch (Exception e) {

@@ -3,10 +3,12 @@ package com.xiaozhi.websocket.handler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.util.AttributeKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 /**
  * WebSocket 握手处理器
@@ -26,6 +28,17 @@ public class WebSocketHandshakeHandler extends ChannelInboundHandlerAdapter {
 
             // 提取设备ID
             String deviceId = req.headers().get("device-id");
+
+            // 如果请求头中没有 device-id，尝试从 URL 查询参数中获取
+            if (deviceId == null || deviceId.isEmpty()) {
+                // 解析 URL 查询参数
+                QueryStringDecoder decoder = new QueryStringDecoder(req.uri());
+                deviceId = Optional.ofNullable(decoder.parameters().get("device_id"))
+                        .filter(list -> !list.isEmpty())
+                        .map(list -> list.get(0))
+                        .orElse(null);
+            }
+
             if (deviceId == null || deviceId.isEmpty()) {
                 logger.warn("WebSocket连接缺少device-id头");
                 ctx.close();

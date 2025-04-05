@@ -103,9 +103,15 @@ public class NettyWebSocketConfig {
                                             TimeUnit.SECONDS))
                                     // 心跳处理
                                     .addLast(new WebSocketHeartbeatHandler())
-                                    // WebSocket协议处理
-                                    .addLast(
-                                            new WebSocketServerProtocolHandler(websocketPath, null, true, maxFrameSize))
+                                    //处理 WebSocket 协议的升级和消息解析
+                                    .addLast(new WebSocketServerProtocolHandler(
+                                            websocketPath,
+                                            null,
+                                            true,
+                                            maxFrameSize,
+                                            false,  // 不检查起始帧
+                                            true    // 允许扩展
+                                    ))
                                     // WebSocket控制帧处理
                                     .addLast(new WebSocketControlFrameHandler())
                                     // WebSocket文本帧处理
