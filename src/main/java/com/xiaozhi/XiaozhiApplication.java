@@ -17,7 +17,7 @@ public class XiaozhiApplication {
 
     Logger logger = LoggerFactory.getLogger(XiaozhiApplication.class);
 
-    @Value("${netty.websocket.port:8091}")
+    @Value("${netty.websocket.port:8082}")
     private int nettyPort;
 
     public static void main(String[] args) {

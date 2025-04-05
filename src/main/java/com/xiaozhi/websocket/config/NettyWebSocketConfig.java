@@ -32,7 +32,7 @@ public class NettyWebSocketConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(NettyWebSocketConfig.class);
 
-    @Value("${netty.websocket.port:8091}")
+    @Value("${netty.websocket.port:8082}")
     private int port;
 
     @Value("${netty.websocket.path:/ws/xiaozhi/v1/}")

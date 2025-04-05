@@ -1,13 +1,13 @@
 package com.xiaozhi.websocket.service;
 
 import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.thread.ThreadFactoryBuilder;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.xiaozhi.websocket.audio.processor.OpusProcessor;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
+import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -296,6 +296,100 @@ public class AudioService {
     }
 
     /**
+     * 处理队列中的下一个音频任务
+     */
+    private void processNextAudio(Channel channel) {
+        final String sessionId = channel.attr(SESSION_ID).get();
+        final BlockingQueue<ProcessedAudioTask> queue = audioQueues.get(sessionId);
+
+        if (queue == null) {
+            logger.error("音频队列未初始化 - SessionId: {}", sessionId);
+            return;
+        }
+
+        // 检查队列是否为空
+        ProcessedAudioTask task = queue.poll();
+
+        if (task == null) {
+            // 队列为空，设置处理状态为false
+            isProcessingMap.put(sessionId,false);
+            return;
+        }
+
+        // 异步处理音频任务
+        baseThreadPool.submit(() -> {
+            try {
+                sendSentenceStart(channel, task.getText());
+
+                // 获取已处理的Opus帧
+                List<byte[]> opusFrames = task.getOpusFrames();
+
+                // 开始发送音频帧
+                long startTime = System.nanoTime();
+                long playPosition = 0;
+
+                for (int i = 0; i < opusFrames.size(); i++) {
+                    byte[] frame = opusFrames.get(i);
+
+                    // 计算预期发送时间（纳秒）
+                    long expectedTime = startTime + (playPosition * 1_000_000);
+                    long currentTime = System.nanoTime();
+                    long delayNanos = expectedTime - currentTime;
+
+                    // 执行延迟
+                    if (delayNanos > 0) {
+                        // 转换为毫秒和纳秒余数
+                        long delayMillis = delayNanos / 1_000_000;
+                        int delayNanosRemainder = (int) (delayNanos % 1_000_000);
+
+                        if (delayMillis > 0 || delayNanosRemainder > 0) {
+                            Thread.sleep(delayMillis, delayNanosRemainder);
+                        }
+                    }
+
+                    // 再次检查会话是否仍然打开
+                    if (channel.isActive()) {
+                        // 直接发送Opus帧
+                        ByteBuf buf = Unpooled.wrappedBuffer(frame);
+                        BinaryWebSocketFrame frameBuf = new BinaryWebSocketFrame(buf);
+                        channel.writeAndFlush(frameBuf).addListener(future -> {
+                            if (!future.isSuccess()) {
+                                logger.warn("帧发送失败 - Cause: {}", future.cause().getMessage());
+                            }
+                        });
+
+                        // 更新播放位置（毫秒）
+                        playPosition += FRAME_DURATION_MS;
+                    } else {
+                        logger.info("会话已关闭，停止发送音频");
+                        cleanupSession(sessionId);
+                        return;
+                    }
+                }
+
+                // 删除音频文件
+                cleanupTaskResources(task.getOriginalFilePath());
+
+                // 发送句子结束消息
+                if (channel.isActive()) {
+                    if (task.isLastText()) {
+                        // 使用内部方法发送停止指令，避免触发清空队列
+                        sendStop(channel);
+                    }
+                }
+
+                // 处理下一个音频任务
+                processNextAudio(channel);
+
+            } catch (Exception e) {
+                logger.error("发送音频数据时发生错误: {}", e.getMessage(), e);
+                // 出错时也尝试处理下一个任务
+                processNextAudio(channel);
+            }
+        });
+    }
+
+    /**
      * 处理队列中的下一个音频任务（优化版）
      *
      * 优化点：
@@ -305,7 +399,7 @@ public class AudioService {
      * 4. 完善资源清理
      * 5. 添加流量控制
      */
-    private void processNextAudio(Channel channel) {
+/*    private void processNextAudio(Channel channel) {
         final String sessionId = channel.attr(SESSION_ID).get();
         final BlockingQueue<ProcessedAudioTask> queue = audioQueues.get(sessionId);
         if (queue == null) {
@@ -346,7 +440,7 @@ public class AudioService {
                 }
             }
         });
-    }
+    }*/
 
     /**
      * 高精度音频帧发送（核心优化）
