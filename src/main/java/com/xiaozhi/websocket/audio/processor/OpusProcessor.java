@@ -69,6 +69,10 @@ public class OpusProcessor {
      */
     public List<byte[]> convertPcmToOpus(byte[] pcmData, int sampleRate, int channels, int frameDurationMs)
             throws OpusException {
+        if (pcmData == null || pcmData.length == 0) {
+            logger.warn("PCM数据为空，无法转换为Opus格式");
+            throw new OpusException("PCM数据为空，无法转换为Opus格式");
+        }
         // 创建Opus编码器
         OpusEncoder encoder = new OpusEncoder(sampleRate, channels, OpusApplication.OPUS_APPLICATION_VOIP);
 
@@ -78,22 +82,33 @@ public class OpusProcessor {
         // 每帧样本数
         int frameSize = sampleRate * frameDurationMs / 1000;
 
+        // 每个样本的字节数
+        int bytesPerSample = 2;
+
         // 处理PCM数据
         List<byte[]> opusFrames = new ArrayList<>();
         short[] shortBuffer = new short[frameSize * channels];
 
-        for (int i = 0; i < pcmData.length / 2; i += frameSize * channels) {
+        for (int i = 0; i < pcmData.length; i += frameSize * channels * bytesPerSample) {
+            int frameBytes = Math.min(frameSize * channels * bytesPerSample, pcmData.length - i);
+            int frameSamples = frameBytes / bytesPerSample;
+
             // 将字节数据转换为short
-            for (int j = 0; j < frameSize * channels && (i + j) < pcmData.length / 2; j++) {
-                int byteIndex = (i + j) * 2;
-                if (byteIndex + 1 < pcmData.length) {
-                    shortBuffer[j] = (short) ((pcmData[byteIndex] & 0xFF) | (pcmData[byteIndex + 1] << 8));
+            for (int j = 0; j < frameSamples; j++) {
+                int byteIndex = i + j * bytesPerSample;
+                if (byteIndex + bytesPerSample <= pcmData.length) {
+                    int value = 0;
+                    for (int b = 0; b < bytesPerSample; b++) {
+                        value |= (pcmData[byteIndex + b] & 0xFF) << (b * 8);
+                    }
+                    shortBuffer[j] = (short) value;
                 }
             }
 
             // 编码
             byte[] opusBuffer = new byte[1275]; // 最大Opus帧大小
-            int opusLength = encoder.encode(shortBuffer, 0, frameSize, opusBuffer, 0, opusBuffer.length);
+            int opusLength = encoder.encode(shortBuffer, 0, frameSize, opusBuffer,
+                    0, opusBuffer.length);
 
             // 创建正确大小的帧并添加到列表
             byte[] opusFrame = new byte[opusLength];
