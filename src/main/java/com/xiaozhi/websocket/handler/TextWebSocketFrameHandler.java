@@ -1,5 +1,6 @@
 package com.xiaozhi.websocket.handler;
 
+import cn.hutool.extra.spring.SpringUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -14,7 +15,6 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -35,20 +35,15 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 
   private static final Logger logger = LoggerFactory.getLogger(TextWebSocketFrameHandler.class);
 
-  @Autowired
-  private SysDeviceService deviceService;
+  private final SysDeviceService deviceService = SpringUtil.getBean(SysDeviceService.class);
 
-  @Autowired
-  private AudioService audioService;
+  private final AudioService audioService = SpringUtil.getBean(AudioService.class);
 
-  @Autowired
-  private LlmManager llmManager;
+  private final LlmManager llmManager = SpringUtil.getBean(LlmManager.class);
 
-  @Autowired
-  private MessageService messageService;
+  private final MessageService messageService = SpringUtil.getBean(MessageService.class);
 
-  @Autowired
-  private TextToSpeechService textToSpeechService;
+  private final TextToSpeechService textToSpeechService = SpringUtil.getBean(TextToSpeechService.class);
 
   private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -68,7 +63,6 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
   public void channelInactive(ChannelHandlerContext ctx) throws Exception {
     String sessionId = ctx.channel().attr(SESSION_ID).get();
     SysDevice device = DEVICES_CONFIG.get(sessionId);
-
     // 更新设备在线时间
     if (device != null) {
       deviceService
@@ -77,16 +71,14 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 
       logger.info("WebSocket连接关闭 - SessionId: {}, DeviceId: {}", sessionId, device.getDeviceId());
     }
-
     LISTENING_STATE.remove(sessionId);
     DEVICES_CONFIG.remove(sessionId);
     logger.info("客户端断开连接: {}", ctx.channel().remoteAddress());
-
     super.channelInactive(ctx);
   }
 
   @Override
-  protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame frame) throws Exception {
+  protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame frame) {
     try {
       // 初始化设备信息
       initializeDeviceSession(ctx);
@@ -116,6 +108,9 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
     } catch (Exception e) {
       logger.error("处理消息失败", e);
     }
+
+    // 继续处理请求
+    ctx.fireChannelRead(frame);
   }
 
   /**
@@ -175,11 +170,11 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
     logger.info("收到hello消息 - SessionId: {}", sessionId);
 
     // 验证客户端hello消息
-    if (!jsonNode.path("transport").asText().equals("websocket")) {
+    /*if (!jsonNode.path("transport").asText().equals("websocket")) {
       logger.warn("不支持的传输方式: {}", jsonNode.path("transport").asText());
       ctx.close();
       return;
-    }
+    }*/
 
     // 解析音频参数
     JsonNode audioParams = jsonNode.path("audio_params");

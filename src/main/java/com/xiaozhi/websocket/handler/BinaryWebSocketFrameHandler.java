@@ -94,6 +94,8 @@ public class BinaryWebSocketFrameHandler extends SimpleChannelInboundHandler<Bin
     } catch (Exception e) {
       logger.error("处理二进制消息失败", e);
     }
+    // 继续处理请求
+    ctx.fireChannelRead(frame);
   }
 
   /**

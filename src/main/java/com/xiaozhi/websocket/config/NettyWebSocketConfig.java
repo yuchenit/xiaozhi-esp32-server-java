@@ -18,7 +18,6 @@ import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -51,21 +50,6 @@ public class NettyWebSocketConfig {
     @Value("${netty.websocket.idleTimeout:300}")
     private int idleTimeout;
 
-    @Autowired
-    private TextWebSocketFrameHandler textWebSocketFrameHandler;
-
-    @Autowired
-    private BinaryWebSocketFrameHandler binaryWebSocketFrameHandler;
-
-    @Autowired
-    private WebSocketControlFrameHandler webSocketControlFrameHandler;
-
-    @Autowired
-    private WebSocketExceptionHandler webSocketExceptionHandler;
-
-    @Autowired
-    private WebSocketHeartbeatHandler webSocketHeartbeatHandler;
-
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
 
@@ -96,13 +80,6 @@ public class NettyWebSocketConfig {
                                     .addLast(new HttpObjectAggregator(maxFrameSize))
                                     // WebSocket握手处理
                                     .addLast(new WebSocketHandshakeHandler())
-                                    // WebSocket压缩支持
-                                    .addLast(new WebSocketServerCompressionHandler())
-                                    // 空闲连接检测
-                                    .addLast(new IdleStateHandler(idleTimeout, idleTimeout, idleTimeout,
-                                            TimeUnit.SECONDS))
-                                    // 心跳处理
-                                    .addLast(new WebSocketHeartbeatHandler())
                                     //处理 WebSocket 协议的升级和消息解析
                                     .addLast(new WebSocketServerProtocolHandler(
                                             websocketPath,
@@ -112,6 +89,13 @@ public class NettyWebSocketConfig {
                                             false,  // 不检查起始帧
                                             true    // 允许扩展
                                     ))
+                                    // WebSocket压缩支持
+                                    .addLast(new WebSocketServerCompressionHandler())
+                                    // 空闲连接检测
+                                    .addLast(new IdleStateHandler(idleTimeout, idleTimeout, idleTimeout,
+                                            TimeUnit.SECONDS))
+                                    // 心跳处理
+                                    .addLast(new WebSocketHeartbeatHandler())
                                     // WebSocket控制帧处理
                                     .addLast(new WebSocketControlFrameHandler())
                                     // WebSocket文本帧处理
