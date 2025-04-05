@@ -1152,3 +1152,5 @@
 03:37:25.332 [OkHttp https://open.bigmodel.cn/...] DEBUG com.xiaozhi.dao.MessageMapper.add - <==    Updates: 1
 03:42:13.009 [nioEventLoopGroup-3-1] DEBUG c.x.w.h.WebSocketHeartbeatHandler - 读空闲超时 - SessionId: aadf6b90
 03:47:13.015 [nioEventLoopGroup-3-1] DEBUG c.x.w.h.WebSocketHeartbeatHandler - 读空闲超时 - SessionId: aadf6b90
+03:52:13.030 [nioEventLoopGroup-3-1] DEBUG c.x.w.h.WebSocketHeartbeatHandler - 读空闲超时 - SessionId: aadf6b90
+03:52:13.030 [nioEventLoopGroup-3-1] DEBUG c.x.w.h.WebSocketHeartbeatHandler - 读空闲超时 - SessionId: aadf6b90
