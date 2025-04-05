@@ -1,6 +1,9 @@
 package com.xiaozhi.websocket.service;
 
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.thread.ThreadFactoryBuilder;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.xiaozhi.websocket.audio.processor.OpusProcessor;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -13,9 +16,12 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
-import java.util.Queue;
 import java.util.concurrent.*;
+import java.util.concurrent.locks.LockSupport;
 
 import static com.xiaozhi.websocket.handler.WebSocketHandshakeHandler.SESSION_ID;
 
@@ -37,6 +43,29 @@ public class AudioService {
 
     // 跟踪每个会话的发送状态
     private final ConcurrentHashMap<String, Boolean> isProcessingMap = new ConcurrentHashMap<>();
+
+    private final ScheduledExecutorService scheduledExecutor;
+
+    private final ExecutorService cleanupExecutor;
+
+    public AudioService() {
+        this.scheduledExecutor = Executors.newScheduledThreadPool(
+                Runtime.getRuntime().availableProcessors(),
+                new ThreadFactoryBuilder()
+                        .setNamePrefix("audio-sender-%d")
+                        .setDaemon(true)
+                        .build()
+        );
+
+        this.cleanupExecutor = Executors.newSingleThreadExecutor(
+                new ThreadFactoryBuilder()
+                        .setNamePrefix("audio-cleanup")
+                        .setDaemon(true)
+                        .build()
+        );
+
+        // 其他初始化...
+    }
 
     @Resource
     private MessageService messageService;
@@ -194,8 +223,8 @@ public class AudioService {
             throw e;
         }finally {
             // 删除临时文件
-            if (tempPcmFile != null && tempPcmFile.exists()) {
-                tempPcmFile.delete();
+            if (tempPcmFile != null) {
+                Files.deleteIfExists(Paths.get(tempPcmFile.getAbsolutePath()));
             }
         }
     }
@@ -277,7 +306,7 @@ public class AudioService {
     /**
      * 处理队列中的下一个音频任务
      */
-    private void processNextAudio(Channel channel) {
+    /*private void processNextAudio(Channel channel) {
         logger.info("处理队列中的下一个音频任务");
         String sessionId = channel.attr(SESSION_ID).get();
         BlockingQueue<ProcessedAudioTask> queue = audioQueues.get(sessionId);
@@ -287,18 +316,16 @@ public class AudioService {
             return;
         }
 
-        // 检查队列是否为空
-        ProcessedAudioTask task = queue.poll();
-
-        if (task == null) {
-            // 队列为空，设置处理状态为false
-            isProcessingMap.putIfAbsent(sessionId, false);
-            return;
-        }
-
         logger.info("异步处理音频任务,sessionId = {}",sessionId);
-        baseThreadPool.submit(() -> {
+        baseThreadPool.execute(() -> {
             try {
+                // 检查队列是否为空
+                ProcessedAudioTask task = queue.poll();
+                if (task == null) {
+                    // 队列为空，设置处理状态为false
+                    isProcessingMap.putIfAbsent(sessionId, false);
+                    return;
+                }
                 logger.info("发送句子开始信号,sessionId={}",sessionId);
                 sendSentenceStart(channel, task.getText());
 
@@ -326,14 +353,7 @@ public class AudioService {
                         // 转换为毫秒和纳秒余数
                         long delayMillis = delayNanos / 1_000_000;
                         int delayNanosRemainder = (int) (delayNanos % 1_000_000);
-                        if (delayMillis > 0 || delayNanosRemainder > 0) {
-                            try {
-                                Thread.sleep(delayMillis, delayNanosRemainder);
-                            } catch (InterruptedException e) {
-                                logger.error("音频发送线程被中断", e);
-                                Thread.currentThread().interrupt();
-                            }
-                        }
+
                     }
                     byte[] frame = opusFrames.get(i);
                     // 直接发送Opus帧
@@ -345,7 +365,7 @@ public class AudioService {
                 }
 
                 // 删除音频文件
-                deleteAudioFiles(task.getOriginalFilePath());
+                cleanupTaskResources(task);
 
                 // 发送句子结束消息
                 if (channel.isActive()) {
@@ -368,32 +388,128 @@ public class AudioService {
                 isProcessingMap.put(sessionId, false);
             }
         });
+    }*/
+
+    /**
+     * 处理队列中的下一个音频任务（优化版）
+     *
+     * 优化点：
+     * 1. 使用高精度定时器替代Thread.sleep
+     * 2. 增加背压控制机制
+     * 3. 优化日志级别和内容
+     * 4. 完善资源清理
+     * 5. 添加流量控制
+     */
+    private void processNextAudio(Channel channel) {
+        final String sessionId = channel.attr(SESSION_ID).get();
+        final BlockingQueue<ProcessedAudioTask> queue = audioQueues.get(sessionId);
+        if (queue == null) {
+            logger.error("音频队列未初始化 - SessionId: {}", sessionId);
+            return;
+        }
+        baseThreadPool.execute(() -> {
+            ProcessedAudioTask task = null;
+            try {
+                // 非阻塞获取任务
+                task = queue.poll();
+                if (task == null) {
+                    isProcessingMap.put(sessionId, false);
+                    logger.debug("音频队列为空 - SessionId: {}", sessionId);
+                    return;
+                }
+
+                logger.debug("开始处理音频任务 - SessionId: {}, Text: {}", sessionId, task.getText());
+                sendSentenceStart(channel, task.getText());
+
+                // 高精度帧发送控制
+                sendAudioFramesWithPrecision(channel, task);
+
+                // 处理结束逻辑
+                if (task.isLastText() && channel.isActive()) {
+                    logger.debug("发送会话结束信号 - SessionId: {}", sessionId);
+                    sendStop(channel);
+                }
+            } catch (Exception e) {
+                logger.error("音频任务处理异常 - SessionId: {}, Error: {}", sessionId, e.getMessage(), e);
+            } finally {
+                // 资源清理
+                if (task != null) {
+                    cleanupTaskResources(task.getOriginalFilePath());
+                }
+
+                // 递归处理下一个任务（非立即执行，避免堆栈溢出）
+                scheduledExecutor.schedule(() -> processNextAudio(channel), 10, TimeUnit.MILLISECONDS);
+            }
+        });
+    }
+
+    /**
+     * 高精度音频帧发送（核心优化）
+     */
+    private void sendAudioFramesWithPrecision(Channel channel, ProcessedAudioTask task) {
+        final long frameIntervalNs = TimeUnit.MILLISECONDS.toNanos(FRAME_DURATION_MS);
+        final long startTime = System.nanoTime();
+
+        for (int i = 0; i < task.getOpusFrames().size(); i++) {
+            // 通道状态检查
+            if (!channel.isActive() || !channel.isWritable()) {
+                logger.warn("通道不可用，中断发送 - ChannelActive: {}, Writable: {}",
+                        channel.isActive(), channel.isWritable());
+                break;
+            }
+
+            // 高精度定时控制
+            long expectedTime = startTime + (i * frameIntervalNs);
+            long currentTime = System.nanoTime();
+            long delayNs = expectedTime - currentTime;
+
+            if (delayNs > 0) {
+                LockSupport.parkNanos(delayNs); // 比Thread.sleep更精确
+            } else if (delayNs < -frameIntervalNs * 2) {
+                logger.warn("严重延迟，跳过帧补偿 - DelayMs: {}",
+                        TimeUnit.NANOSECONDS.toMillis(-delayNs));
+                continue; // 超过两帧延迟则跳过
+            }
+
+            // 发送帧数据
+            ByteBuf frameBuf = Unpooled.wrappedBuffer(task.getOpusFrames().get(i));
+            channel.writeAndFlush(frameBuf).addListener(future -> {
+                if (!future.isSuccess()) {
+                    logger.warn("帧发送失败 - Cause: {}", future.cause().getMessage());
+                }
+            });
+
+            // 每10帧检查一次背压
+            if (i % 10 == 0 && channel.bytesBeforeUnwritable() < frameBuf.readableBytes() * 5L) {
+                logger.debug("背压控制 - 暂停发送等待缓冲区");
+                channel.flush();
+                while (!channel.isWritable()) {
+                    LockSupport.parkNanos(frameIntervalNs);
+                }
+            }
+        }
     }
 
     /**
      * 删除音频文件及其相关文件（如同名的VTT文件）
      * @param audioPath 音频文件路径
      */
-    public void deleteAudioFiles(String audioPath) {
+    private void cleanupTaskResources(String audioPath) {
+        if (StrUtil.isEmpty(audioPath)) {
+            return;
+        }
         logger.info("删除音频文件及其相关文件,audioPath = {}",audioPath);
+        // 删除原始音频文件
         try {
-            // 删除原始音频文件
-            File audioFile = new File(audioPath);
-            if (audioFile.exists()) {
-                if (!audioFile.delete()) {
-                    logger.warn("无法删除音频文件: {}", audioPath);
-                }
-            }
+            Files.deleteIfExists(Paths.get(audioPath));
+        } catch (IOException e) {
+            logger.warn("音频文件删除失败 - Path: {}, Error: {}",audioPath, e.getMessage());
+        }
 
-            // 删除可能存在的VTT文件
-            File vttFile = new File(audioPath + ".vtt");
-            if (vttFile.exists()) {
-                if (!vttFile.delete()) {
-                    logger.warn("无法删除VTT文件: {}", vttFile.getPath());
-                }
-            }
-        } catch (Exception e) {
-            logger.error("删除音频文件时发生错误: {}", audioPath, e);
+        try {
+            Files.deleteIfExists(Paths.get(audioPath + ".vtt"));
+        } catch (IOException e) {
+            logger.warn("VTT文件删除失败 - Path: {}, Error: {}",audioPath + ".vtt", e.getMessage());
         }
     }
 
@@ -428,23 +544,17 @@ public class AudioService {
 
         BlockingQueue<ProcessedAudioTask> queue = audioQueues.get(sessionId);
         if (queue != null) {
-            // 保存需要删除的音频文件路径
-            Queue<String> filesToDelete = new ConcurrentLinkedQueue<>();
-            queue.forEach(task -> {
-                if (task != null && task.getOriginalFilePath() != null) {
-                    filesToDelete.add(task.getOriginalFilePath());
-                }
+            // 异步删除文件
+            baseThreadPool.submit(() -> {
+                queue.forEach(task -> {
+                    if (ObjectUtil.isNotNull(task) && StrUtil.isNotEmpty(task.getOriginalFilePath())) {
+                        cleanupTaskResources(task.getOriginalFilePath());
+                    }
+                });
             });
 
             // 清空队列
             queue.clear();
-
-            // 异步删除文件
-            if (!filesToDelete.isEmpty()) {
-                baseThreadPool.submit(() -> {
-                    filesToDelete.forEach(this::deleteAudioFiles);
-                });
-            }
         }
 
         audioQueues.remove(sessionId);
