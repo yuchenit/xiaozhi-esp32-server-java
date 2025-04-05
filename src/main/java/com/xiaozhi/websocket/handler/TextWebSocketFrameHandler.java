@@ -13,6 +13,7 @@ import com.xiaozhi.websocket.service.TextToSpeechService;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import io.netty.util.ReferenceCountUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -107,10 +108,8 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
       }
     } catch (Exception e) {
       logger.error("处理消息失败", e);
+      ReferenceCountUtil.release(frame);
     }
-
-    // 继续处理请求
-    ctx.fireChannelRead(frame);
   }
 
   /**

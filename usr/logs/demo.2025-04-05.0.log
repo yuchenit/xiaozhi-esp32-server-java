@@ -1,0 +1,626 @@
+20:30:44.440 [main] INFO  com.xiaozhi.XiaozhiApplication - Starting XiaozhiApplication using Java 1.8.0_321 on pc-yuchen with PID 26084 (D:\project\java\xiaozhi-esp32-server-java\target\classes started by yc in D:\project\java\xiaozhi-esp32-server-java)
+20:30:44.443 [main] INFO  com.xiaozhi.XiaozhiApplication - The following 1 profile is active: "dev"
+20:30:45.479 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8092 (http)
+20:30:45.484 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8092"]
+20:30:45.486 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+20:30:45.486 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.83]
+20:30:45.612 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+20:30:45.612 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1118 ms
+20:30:46.277 [main] INFO  c.x.w.a.processor.TarsosNoiseReducer - 噪声抑制处理器已初始化
+20:30:46.282 [main] INFO  c.x.w.config.NettyWebSocketConfig - 启动Netty WebSocket服务器，端口：8091，路径：/ws/xiaozhi/v1/
+20:30:46.728 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0xd91c4c7d] REGISTERED
+20:30:46.729 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0xd91c4c7d] BIND: 0.0.0.0/0.0.0.0:8091
+20:30:46.731 [main] INFO  c.x.w.config.NettyWebSocketConfig - Netty WebSocket服务器启动成功，监听端口: 8091
+20:30:46.732 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0xd91c4c7d, L:/0:0:0:0:0:0:0:0:8091] ACTIVE
+20:30:47.170 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+20:30:47.198 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8092"]
+20:30:47.209 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8092 (http) with context path ''
+20:30:47.840 [main] INFO  com.xiaozhi.XiaozhiApplication - ==========================================================
+20:30:47.840 [main] INFO  com.xiaozhi.XiaozhiApplication - Spring Boot服务运行于: http://192.168.8.9:8092
+20:30:47.840 [main] INFO  com.xiaozhi.XiaozhiApplication - WebSocket服务运行于:
+20:30:47.840 [main] INFO  com.xiaozhi.XiaozhiApplication - ws://192.168.8.9:8091/ws/xiaozhi/v1/
+20:30:47.840 [main] INFO  com.xiaozhi.XiaozhiApplication - ==========================================================
+20:30:47.854 [main] INFO  com.xiaozhi.XiaozhiApplication - Started XiaozhiApplication in 3.891 seconds (JVM running for 5.114)
+20:30:47.860 [main] INFO  c.x.w.a.d.impl.SileroVadDetector - 噪声抑制功能已启用
+20:30:47.860 [main] INFO  c.x.w.a.processor.TarsosNoiseReducer - 频谱减法因子已更新为: 1.5
+20:30:47.860 [main] INFO  c.x.w.a.processor.TarsosNoiseReducer - 噪声估计窗口已更新为: 15 帧
+20:30:48.795 [RMI TCP Connection(3)-192.168.8.9] WARN  com.zaxxer.hikari.HikariConfig - DatebookHikariCP - idleTimeout is close to or more than maxLifetime, disabling it.
+20:30:48.795 [RMI TCP Connection(2)-192.168.8.9] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+20:30:48.795 [RMI TCP Connection(3)-192.168.8.9] INFO  com.zaxxer.hikari.HikariDataSource - DatebookHikariCP - Starting...
+20:30:48.795 [RMI TCP Connection(2)-192.168.8.9] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+20:30:48.797 [RMI TCP Connection(2)-192.168.8.9] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+20:30:48.930 [RMI TCP Connection(3)-192.168.8.9] INFO  com.zaxxer.hikari.HikariDataSource - DatebookHikariCP - Start completed.
+20:33:03.578 [SpringApplicationShutdownHook] INFO  c.x.w.config.NettyWebSocketConfig - 关闭Netty WebSocket服务器
+20:33:03.579 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0xd91c4c7d, L:/0:0:0:0:0:0:0:0:8091] INACTIVE
+20:33:03.580 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0xd91c4c7d, L:/0:0:0:0:0:0:0:0:8091] UNREGISTERED
+20:33:03.580 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - DatebookHikariCP - Shutdown initiated...
+20:33:03.585 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - DatebookHikariCP - Shutdown completed.
+20:33:07.955 [main] INFO  com.xiaozhi.XiaozhiApplication - Starting XiaozhiApplication using Java 1.8.0_321 on pc-yuchen with PID 9772 (D:\project\java\xiaozhi-esp32-server-java\target\classes started by yc in D:\project\java\xiaozhi-esp32-server-java)
+20:33:07.957 [main] INFO  com.xiaozhi.XiaozhiApplication - The following 1 profile is active: "dev"
+20:33:09.076 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8092 (http)
+20:33:09.083 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8092"]
+20:33:09.084 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+20:33:09.085 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.83]
+20:33:09.202 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+20:33:09.202 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1196 ms
+20:33:09.939 [main] INFO  c.x.w.a.processor.TarsosNoiseReducer - 噪声抑制处理器已初始化
+20:33:09.944 [main] INFO  c.x.w.config.NettyWebSocketConfig - 启动Netty WebSocket服务器，端口：8091，路径：/ws/xiaozhi/v1/
+20:33:10.456 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0xe39ca144] REGISTERED
+20:33:10.457 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0xe39ca144] BIND: 0.0.0.0/0.0.0.0:8091
+20:33:10.459 [main] INFO  c.x.w.config.NettyWebSocketConfig - Netty WebSocket服务器启动成功，监听端口: 8091
+20:33:10.460 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0xe39ca144, L:/0:0:0:0:0:0:0:0:8091] ACTIVE
+20:33:10.917 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+20:33:10.945 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8092"]
+20:33:10.956 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8092 (http) with context path ''
+20:33:11.578 [main] INFO  com.xiaozhi.XiaozhiApplication - ==========================================================
+20:33:11.578 [main] INFO  com.xiaozhi.XiaozhiApplication - Spring Boot服务运行于: http://192.168.8.9:8092
+20:33:11.578 [main] INFO  com.xiaozhi.XiaozhiApplication - WebSocket服务运行于:
+20:33:11.578 [main] INFO  com.xiaozhi.XiaozhiApplication - ws://192.168.8.9:8091/ws/xiaozhi/v1/
+20:33:11.578 [main] INFO  com.xiaozhi.XiaozhiApplication - ==========================================================
+20:33:11.591 [main] INFO  com.xiaozhi.XiaozhiApplication - Started XiaozhiApplication in 4.133 seconds (JVM running for 5.129)
+20:33:11.597 [main] INFO  c.x.w.a.d.impl.SileroVadDetector - 噪声抑制功能已启用
+20:33:11.597 [main] INFO  c.x.w.a.processor.TarsosNoiseReducer - 频谱减法因子已更新为: 1.5
+20:33:11.597 [main] INFO  c.x.w.a.processor.TarsosNoiseReducer - 噪声估计窗口已更新为: 15 帧
+20:33:12.359 [RMI TCP Connection(3)-192.168.8.9] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+20:33:12.359 [RMI TCP Connection(3)-192.168.8.9] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+20:33:12.360 [RMI TCP Connection(4)-192.168.8.9] WARN  com.zaxxer.hikari.HikariConfig - DatebookHikariCP - idleTimeout is close to or more than maxLifetime, disabling it.
+20:33:12.360 [RMI TCP Connection(4)-192.168.8.9] INFO  com.zaxxer.hikari.HikariDataSource - DatebookHikariCP - Starting...
+20:33:12.362 [RMI TCP Connection(3)-192.168.8.9] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 3 ms
+20:33:12.509 [RMI TCP Connection(4)-192.168.8.9] INFO  com.zaxxer.hikari.HikariDataSource - DatebookHikariCP - Start completed.
+20:34:01.848 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0xe39ca144, L:/0:0:0:0:0:0:0:0:8091] READ: [id: 0xa673cdf5, L:/127.0.0.1:8091 - R:/127.0.0.1:61881]
+20:34:01.849 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0xe39ca144, L:/0:0:0:0:0:0:0:0:8091] READ COMPLETE
+20:34:01.889 [nioEventLoopGroup-3-1] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端连接: /127.0.0.1:61881
+20:34:01.911 [nioEventLoopGroup-3-1] INFO  c.x.w.h.WebSocketHandshakeHandler - WebSocket握手请求 - SessionId: a673cdf5, DeviceId: web_test_device
+20:34:01.941 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0xe39ca144, L:/0:0:0:0:0:0:0:0:8091] READ: [id: 0x6a03b207, L:/127.0.0.1:8091 - R:/127.0.0.1:61882]
+20:34:01.942 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0xe39ca144, L:/0:0:0:0:0:0:0:0:8091] READ COMPLETE
+20:34:01.945 [nioEventLoopGroup-3-2] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端连接: /127.0.0.1:61882
+20:34:01.946 [nioEventLoopGroup-3-2] INFO  c.x.w.h.WebSocketHandshakeHandler - WebSocket握手请求 - SessionId: 6a03b207, DeviceId: web_test_device
+20:34:01.988 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.query - ==>  Preparing: SELECT sys_device.deviceId, sys_device.deviceName, sys_device.ip, sys_device.wifiName, sys_device.chipModelName, sys_device.version, sys_device.state, sys_device.userId, sys_device.lastLogin, sys_device.createTime , sys_role.roleId, sys_role.roleName, sys_role.roleDesc, sys_role.voiceName , model_config.configId AS modelId , stt_config.configId AS sttId , tts_config.configId AS ttsId FROM sys_device LEFT JOIN sys_role ON sys_device.roleId = sys_role.roleId LEFT JOIN sys_config model_config ON sys_device.modelId = model_config.configId AND model_config.configType = 'llm' LEFT JOIN sys_config stt_config ON sys_device.sttId = stt_config.configId AND stt_config.configType = 'stt' LEFT JOIN sys_config tts_config ON ttsId = tts_config.configId AND tts_config.configType = 'tts' WHERE 1 = 1 AND deviceId = ?
+20:34:02.006 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.query - ==> Parameters: web_test_device(String)
+20:34:02.017 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.query - <==      Total: 1
+20:34:02.027 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.update - ==>  Preparing: UPDATE sys_device SET state = ?, lastLogin = NOW() WHERE deviceId = ?
+20:34:02.027 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.update - ==> Parameters: 1(String), web_test_device(String)
+20:34:02.033 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.update - <==    Updates: 1
+20:34:02.039 [nioEventLoopGroup-3-2] INFO  c.x.w.h.TextWebSocketFrameHandler - WebSocket连接初始化 - SessionId: 6a03b207, DeviceId: web_test_device
+20:34:02.039 [nioEventLoopGroup-3-2] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端发送消息：msg={"type":"hello","device_id":"web_test_device","device_name":"Web测试设备","device_mac":"00:11:22:33:44:55","token":"your-token1"}
+20:34:02.045 [nioEventLoopGroup-3-2] INFO  c.x.w.h.TextWebSocketFrameHandler - 收到hello消息 - SessionId: 6a03b207
+20:34:02.046 [nioEventLoopGroup-3-2] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端音频参数 - 格式: , 采样率: 0, 声道: 0, 帧时长: 0ms
+20:34:05.841 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.query - ==>  Preparing: SELECT sys_device.deviceId, sys_device.deviceName, sys_device.ip, sys_device.wifiName, sys_device.chipModelName, sys_device.version, sys_device.state, sys_device.userId, sys_device.lastLogin, sys_device.createTime , sys_role.roleId, sys_role.roleName, sys_role.roleDesc, sys_role.voiceName , model_config.configId AS modelId , stt_config.configId AS sttId , tts_config.configId AS ttsId FROM sys_device LEFT JOIN sys_role ON sys_device.roleId = sys_role.roleId LEFT JOIN sys_config model_config ON sys_device.modelId = model_config.configId AND model_config.configType = 'llm' LEFT JOIN sys_config stt_config ON sys_device.sttId = stt_config.configId AND stt_config.configType = 'stt' LEFT JOIN sys_config tts_config ON ttsId = tts_config.configId AND tts_config.configType = 'tts' WHERE 1 = 1 AND deviceId = ?
+20:34:05.842 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.query - ==> Parameters: web_test_device(String)
+20:34:05.846 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.query - <==      Total: 1
+20:34:05.847 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.update - ==>  Preparing: UPDATE sys_device SET state = ?, lastLogin = NOW() WHERE deviceId = ?
+20:34:05.847 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.update - ==> Parameters: 1(String), web_test_device(String)
+20:34:05.849 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.update - <==    Updates: 1
+20:34:05.857 [nioEventLoopGroup-3-2] INFO  c.x.w.h.TextWebSocketFrameHandler - WebSocket连接初始化 - SessionId: 6a03b207, DeviceId: web_test_device
+20:34:05.857 [nioEventLoopGroup-3-2] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端发送消息：msg={"type":"listen","mode":"manual","state":"detect","text":"你好"}
+20:34:05.857 [nioEventLoopGroup-3-2] INFO  c.x.w.h.TextWebSocketFrameHandler - 收到listen消息 - SessionId: 6a03b207, State: detect, Mode: manual
+20:34:05.857 [nioEventLoopGroup-3-2] INFO  c.x.w.h.TextWebSocketFrameHandler - 检测到唤醒词: 你好
+20:34:05.857 [nioEventLoopGroup-3-2] INFO  c.x.websocket.service.MessageService - 发送消息 - SessionId: 6a03b207, Type: stt, State: start, Text: 你好
+20:34:05.861 [nioEventLoopGroup-3-2] DEBUG c.x.d.ConfigMapper.selectConfigById - ==>  Preparing: SELECT sys_config.configId, sys_config.userId, sys_config.configName, sys_config.configDesc, sys_config.configType, sys_config.provider, sys_config.appId, sys_config.apiKey, sys_config.apiSecret, sys_config.apiUrl, sys_config.isDefault, sys_config.state, sys_config.createTime FROM sys_config WHERE sys_config.configId = ?
+20:34:05.862 [nioEventLoopGroup-3-2] DEBUG c.x.d.ConfigMapper.selectConfigById - ==> Parameters: 1(Integer)
+20:34:05.864 [nioEventLoopGroup-3-2] DEBUG c.x.d.ConfigMapper.selectConfigById - <==      Total: 1
+20:34:06.374 [nioEventLoopGroup-3-2] DEBUG c.x.dao.RoleMapper.selectRoleById - ==>  Preparing: SELECT sys_role.roleId, sys_role.roleName, sys_role.roleDesc, sys_role.voiceName, sys_role.ttsId, sys_role.userId, sys_role.state, sys_role.createTime FROM sys_role WHERE roleId = ?
+20:34:06.375 [nioEventLoopGroup-3-2] DEBUG c.x.dao.RoleMapper.selectRoleById - ==> Parameters: 3(Integer)
+20:34:06.376 [nioEventLoopGroup-3-2] DEBUG c.x.dao.RoleMapper.selectRoleById - <==      Total: 1
+20:34:06.416 [nioEventLoopGroup-3-2] DEBUG c.x.dao.MessageMapper.query_COUNT - ==>  Preparing: SELECT count(0) FROM sys_message LEFT JOIN sys_device ON sys_message.deviceId = sys_device.deviceId LEFT JOIN sys_role ON sys_device.roleId = sys_role.roleId WHERE sys_message.state = 1 AND sys_message.deviceId = ?
+20:34:06.417 [nioEventLoopGroup-3-2] DEBUG c.x.dao.MessageMapper.query_COUNT - ==> Parameters: web_test_device(String)
+20:34:06.418 [nioEventLoopGroup-3-2] DEBUG c.x.dao.MessageMapper.query_COUNT - <==      Total: 1
+20:34:06.419 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.MessageMapper.query - ==>  Preparing: SELECT sys_message.messageId, sys_message.message, sys_message.sender, sys_message.audioPath, sys_message.state, sys_message.createTime , sys_device.deviceId, sys_device.deviceName, sys_device.userId , sys_role.roleId, sys_role.roleName, sys_role.voiceName FROM sys_message LEFT JOIN sys_device ON sys_message.deviceId = sys_device.deviceId LEFT JOIN sys_role ON sys_device.roleId = sys_role.roleId WHERE sys_message.state = 1 AND sys_message.deviceId = ? ORDER BY sys_message.createTime DESC LIMIT ?
+20:34:06.419 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.MessageMapper.query - ==> Parameters: web_test_device(String), 10(Integer)
+20:34:06.425 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.MessageMapper.query - <==      Total: 10
+20:34:06.425 [nioEventLoopGroup-3-2] INFO  c.x.w.llm.api.AbstractLlmService - 已初始化设备 web_test_device 的历史记录缓存，共 10 条消息
+20:34:06.425 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.MessageMapper.add - ==>  Preparing: INSERT INTO sys_message ( deviceId, sessionId, sender, roleId, message, audioPath ) SELECT ?, ?, ?, ?, ?, ?
+20:34:06.427 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.MessageMapper.add - ==> Parameters: web_test_device(String), 6a03b207(String), user(String), 3(Integer), 你好(String), null
+20:34:06.432 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.MessageMapper.add - <==    Updates: 1
+20:37:07.981 [SpringApplicationShutdownHook] INFO  c.x.w.config.NettyWebSocketConfig - 关闭Netty WebSocket服务器
+20:37:07.984 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0xe39ca144, L:/0:0:0:0:0:0:0:0:8091] INACTIVE
+20:37:07.984 [nioEventLoopGroup-3-1] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端断开连接: /127.0.0.1:61881
+20:37:07.985 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0xe39ca144, L:/0:0:0:0:0:0:0:0:8091] UNREGISTERED
+20:37:07.985 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - DatebookHikariCP - Shutdown initiated...
+20:37:07.992 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - DatebookHikariCP - Shutdown completed.
+20:37:12.379 [main] INFO  com.xiaozhi.XiaozhiApplication - Starting XiaozhiApplication using Java 1.8.0_321 on pc-yuchen with PID 5240 (D:\project\java\xiaozhi-esp32-server-java\target\classes started by yc in D:\project\java\xiaozhi-esp32-server-java)
+20:37:12.385 [main] INFO  com.xiaozhi.XiaozhiApplication - The following 1 profile is active: "dev"
+20:37:13.522 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8092 (http)
+20:37:13.528 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8092"]
+20:37:13.529 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+20:37:13.529 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.83]
+20:37:13.647 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+20:37:13.648 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1197 ms
+20:37:14.348 [main] INFO  c.x.w.a.processor.TarsosNoiseReducer - 噪声抑制处理器已初始化
+20:37:14.353 [main] INFO  c.x.w.config.NettyWebSocketConfig - 启动Netty WebSocket服务器，端口：8091，路径：/ws/xiaozhi/v1/
+20:37:14.806 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0xff61b662] REGISTERED
+20:37:14.807 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0xff61b662] BIND: 0.0.0.0/0.0.0.0:8091
+20:37:14.809 [main] INFO  c.x.w.config.NettyWebSocketConfig - Netty WebSocket服务器启动成功，监听端口: 8091
+20:37:14.811 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0xff61b662, L:/0:0:0:0:0:0:0:0:8091] ACTIVE
+20:37:15.262 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+20:37:15.288 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8092"]
+20:37:15.300 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8092 (http) with context path ''
+20:37:15.936 [main] INFO  com.xiaozhi.XiaozhiApplication - ==========================================================
+20:37:15.936 [main] INFO  com.xiaozhi.XiaozhiApplication - Spring Boot服务运行于: http://192.168.8.9:8092
+20:37:15.936 [main] INFO  com.xiaozhi.XiaozhiApplication - WebSocket服务运行于:
+20:37:15.936 [main] INFO  com.xiaozhi.XiaozhiApplication - ws://192.168.8.9:8091/ws/xiaozhi/v1/
+20:37:15.936 [main] INFO  com.xiaozhi.XiaozhiApplication - ==========================================================
+20:37:15.949 [main] INFO  com.xiaozhi.XiaozhiApplication - Started XiaozhiApplication in 4.043 seconds (JVM running for 5.137)
+20:37:15.956 [main] INFO  c.x.w.a.d.impl.SileroVadDetector - 噪声抑制功能已启用
+20:37:15.956 [main] INFO  c.x.w.a.processor.TarsosNoiseReducer - 频谱减法因子已更新为: 1.5
+20:37:15.956 [main] INFO  c.x.w.a.processor.TarsosNoiseReducer - 噪声估计窗口已更新为: 15 帧
+20:37:16.659 [RMI TCP Connection(1)-192.168.8.9] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+20:37:16.659 [RMI TCP Connection(1)-192.168.8.9] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+20:37:16.660 [RMI TCP Connection(2)-192.168.8.9] WARN  com.zaxxer.hikari.HikariConfig - DatebookHikariCP - idleTimeout is close to or more than maxLifetime, disabling it.
+20:37:16.660 [RMI TCP Connection(2)-192.168.8.9] INFO  com.zaxxer.hikari.HikariDataSource - DatebookHikariCP - Starting...
+20:37:16.662 [RMI TCP Connection(1)-192.168.8.9] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 3 ms
+20:37:16.827 [RMI TCP Connection(2)-192.168.8.9] INFO  com.zaxxer.hikari.HikariDataSource - DatebookHikariCP - Start completed.
+20:37:21.548 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0xff61b662, L:/0:0:0:0:0:0:0:0:8091] READ: [id: 0xdd375696, L:/127.0.0.1:8091 - R:/127.0.0.1:62060]
+20:37:21.550 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0xff61b662, L:/0:0:0:0:0:0:0:0:8091] READ COMPLETE
+20:37:21.597 [nioEventLoopGroup-3-1] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端连接: /127.0.0.1:62060
+20:37:21.620 [nioEventLoopGroup-3-1] INFO  c.x.w.h.WebSocketHandshakeHandler - WebSocket握手请求 - SessionId: dd375696, DeviceId: web_test_device
+20:37:21.644 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0xff61b662, L:/0:0:0:0:0:0:0:0:8091] READ: [id: 0x2421428f, L:/127.0.0.1:8091 - R:/127.0.0.1:62061]
+20:37:21.645 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0xff61b662, L:/0:0:0:0:0:0:0:0:8091] READ COMPLETE
+20:37:21.648 [nioEventLoopGroup-3-2] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端连接: /127.0.0.1:62061
+20:37:21.649 [nioEventLoopGroup-3-2] INFO  c.x.w.h.WebSocketHandshakeHandler - WebSocket握手请求 - SessionId: 2421428f, DeviceId: web_test_device
+20:37:21.698 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.query - ==>  Preparing: SELECT sys_device.deviceId, sys_device.deviceName, sys_device.ip, sys_device.wifiName, sys_device.chipModelName, sys_device.version, sys_device.state, sys_device.userId, sys_device.lastLogin, sys_device.createTime , sys_role.roleId, sys_role.roleName, sys_role.roleDesc, sys_role.voiceName , model_config.configId AS modelId , stt_config.configId AS sttId , tts_config.configId AS ttsId FROM sys_device LEFT JOIN sys_role ON sys_device.roleId = sys_role.roleId LEFT JOIN sys_config model_config ON sys_device.modelId = model_config.configId AND model_config.configType = 'llm' LEFT JOIN sys_config stt_config ON sys_device.sttId = stt_config.configId AND stt_config.configType = 'stt' LEFT JOIN sys_config tts_config ON ttsId = tts_config.configId AND tts_config.configType = 'tts' WHERE 1 = 1 AND deviceId = ?
+20:37:21.715 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.query - ==> Parameters: web_test_device(String)
+20:37:21.728 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.query - <==      Total: 1
+20:37:21.737 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.update - ==>  Preparing: UPDATE sys_device SET state = ?, lastLogin = NOW() WHERE deviceId = ?
+20:37:21.737 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.update - ==> Parameters: 1(String), web_test_device(String)
+20:37:21.742 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.update - <==    Updates: 1
+20:37:21.748 [nioEventLoopGroup-3-2] INFO  c.x.w.h.TextWebSocketFrameHandler - WebSocket连接初始化 - SessionId: 2421428f, DeviceId: web_test_device
+20:37:21.748 [nioEventLoopGroup-3-2] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端发送消息：msg={"type":"hello","device_id":"web_test_device","device_name":"Web测试设备","device_mac":"00:11:22:33:44:55","token":"your-token1"}
+20:37:21.755 [nioEventLoopGroup-3-2] INFO  c.x.w.h.TextWebSocketFrameHandler - 收到hello消息 - SessionId: 2421428f
+20:37:21.756 [nioEventLoopGroup-3-2] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端音频参数 - 格式: , 采样率: 0, 声道: 0, 帧时长: 0ms
+20:37:26.341 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.query - ==>  Preparing: SELECT sys_device.deviceId, sys_device.deviceName, sys_device.ip, sys_device.wifiName, sys_device.chipModelName, sys_device.version, sys_device.state, sys_device.userId, sys_device.lastLogin, sys_device.createTime , sys_role.roleId, sys_role.roleName, sys_role.roleDesc, sys_role.voiceName , model_config.configId AS modelId , stt_config.configId AS sttId , tts_config.configId AS ttsId FROM sys_device LEFT JOIN sys_role ON sys_device.roleId = sys_role.roleId LEFT JOIN sys_config model_config ON sys_device.modelId = model_config.configId AND model_config.configType = 'llm' LEFT JOIN sys_config stt_config ON sys_device.sttId = stt_config.configId AND stt_config.configType = 'stt' LEFT JOIN sys_config tts_config ON ttsId = tts_config.configId AND tts_config.configType = 'tts' WHERE 1 = 1 AND deviceId = ?
+20:37:26.342 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.query - ==> Parameters: web_test_device(String)
+20:37:26.345 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.query - <==      Total: 1
+20:37:26.346 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.update - ==>  Preparing: UPDATE sys_device SET state = ?, lastLogin = NOW() WHERE deviceId = ?
+20:37:26.346 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.update - ==> Parameters: 1(String), web_test_device(String)
+20:37:26.347 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.update - <==    Updates: 1
+20:37:26.355 [nioEventLoopGroup-3-2] INFO  c.x.w.h.TextWebSocketFrameHandler - WebSocket连接初始化 - SessionId: 2421428f, DeviceId: web_test_device
+20:37:26.355 [nioEventLoopGroup-3-2] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端发送消息：msg={"type":"listen","mode":"manual","state":"detect","text":"你好"}
+20:37:26.355 [nioEventLoopGroup-3-2] INFO  c.x.w.h.TextWebSocketFrameHandler - 收到listen消息 - SessionId: 2421428f, State: detect, Mode: manual
+20:37:26.356 [nioEventLoopGroup-3-2] INFO  c.x.w.h.TextWebSocketFrameHandler - 检测到唤醒词: 你好
+20:37:26.356 [nioEventLoopGroup-3-2] INFO  c.x.websocket.service.MessageService - 发送消息 - SessionId: 2421428f, Type: stt, State: start, Text: 你好
+20:37:26.362 [nioEventLoopGroup-3-2] DEBUG c.x.d.ConfigMapper.selectConfigById - ==>  Preparing: SELECT sys_config.configId, sys_config.userId, sys_config.configName, sys_config.configDesc, sys_config.configType, sys_config.provider, sys_config.appId, sys_config.apiKey, sys_config.apiSecret, sys_config.apiUrl, sys_config.isDefault, sys_config.state, sys_config.createTime FROM sys_config WHERE sys_config.configId = ?
+20:37:26.362 [nioEventLoopGroup-3-2] DEBUG c.x.d.ConfigMapper.selectConfigById - ==> Parameters: 1(Integer)
+20:37:26.365 [nioEventLoopGroup-3-2] DEBUG c.x.d.ConfigMapper.selectConfigById - <==      Total: 1
+20:37:26.887 [nioEventLoopGroup-3-2] DEBUG c.x.dao.RoleMapper.selectRoleById - ==>  Preparing: SELECT sys_role.roleId, sys_role.roleName, sys_role.roleDesc, sys_role.voiceName, sys_role.ttsId, sys_role.userId, sys_role.state, sys_role.createTime FROM sys_role WHERE roleId = ?
+20:37:26.887 [nioEventLoopGroup-3-2] DEBUG c.x.dao.RoleMapper.selectRoleById - ==> Parameters: 3(Integer)
+20:37:26.888 [nioEventLoopGroup-3-2] DEBUG c.x.dao.RoleMapper.selectRoleById - <==      Total: 1
+20:37:26.939 [nioEventLoopGroup-3-2] DEBUG c.x.dao.MessageMapper.query_COUNT - ==>  Preparing: SELECT count(0) FROM sys_message LEFT JOIN sys_device ON sys_message.deviceId = sys_device.deviceId LEFT JOIN sys_role ON sys_device.roleId = sys_role.roleId WHERE sys_message.state = 1 AND sys_message.deviceId = ?
+20:37:26.939 [nioEventLoopGroup-3-2] DEBUG c.x.dao.MessageMapper.query_COUNT - ==> Parameters: web_test_device(String)
+20:37:26.941 [nioEventLoopGroup-3-2] DEBUG c.x.dao.MessageMapper.query_COUNT - <==      Total: 1
+20:37:26.945 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.MessageMapper.query - ==>  Preparing: SELECT sys_message.messageId, sys_message.message, sys_message.sender, sys_message.audioPath, sys_message.state, sys_message.createTime , sys_device.deviceId, sys_device.deviceName, sys_device.userId , sys_role.roleId, sys_role.roleName, sys_role.voiceName FROM sys_message LEFT JOIN sys_device ON sys_message.deviceId = sys_device.deviceId LEFT JOIN sys_role ON sys_device.roleId = sys_role.roleId WHERE sys_message.state = 1 AND sys_message.deviceId = ? ORDER BY sys_message.createTime DESC LIMIT ?
+20:37:26.945 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.MessageMapper.query - ==> Parameters: web_test_device(String), 10(Integer)
+20:37:26.950 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.MessageMapper.query - <==      Total: 10
+20:37:26.951 [nioEventLoopGroup-3-2] INFO  c.x.w.llm.api.AbstractLlmService - 已初始化设备 web_test_device 的历史记录缓存，共 10 条消息
+20:37:26.953 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.MessageMapper.add - ==>  Preparing: INSERT INTO sys_message ( deviceId, sessionId, sender, roleId, message, audioPath ) SELECT ?, ?, ?, ?, ?, ?
+20:37:26.954 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.MessageMapper.add - ==> Parameters: web_test_device(String), 2421428f(String), user(String), 3(Integer), 你好(String), null
+20:37:26.957 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.MessageMapper.add - <==    Updates: 1
+20:37:30.588 [pool-2-thread-1] INFO  c.x.websocket.service.MessageService - 发送消息 - SessionId: 2421428f, Type: tts, State: start
+20:37:30.589 [pool-1-thread-1] INFO  c.x.websocket.service.MessageService - 发送消息 - SessionId: 2421428f, Type: tts, State: sentence_start, Text: 你好！如果你有任何问题或者需要帮助，
+20:37:30.599 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.update - ==>  Preparing: UPDATE sys_device SET state = ?, lastLogin = NOW() WHERE deviceId = ?
+20:37:30.600 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.update - ==> Parameters: 0(String), web_test_device(String)
+20:37:30.605 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.update - <==    Updates: 1
+20:37:30.609 [nioEventLoopGroup-3-2] INFO  c.x.w.h.TextWebSocketFrameHandler - WebSocket连接关闭 - SessionId: 2421428f, DeviceId: web_test_device
+20:37:30.609 [nioEventLoopGroup-3-2] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端断开连接: /127.0.0.1:62061
+20:37:30.663 [pool-1-thread-1] INFO  c.x.websocket.service.AudioService - 会话已关闭，停止发送音频
+20:37:32.044 [OkHttp https://open.bigmodel.cn/...] DEBUG com.xiaozhi.dao.MessageMapper.add - ==>  Preparing: INSERT INTO sys_message ( deviceId, sessionId, sender, roleId, message, audioPath ) SELECT ?, ?, ?, ?, ?, ?
+20:37:32.045 [OkHttp https://open.bigmodel.cn/...] DEBUG com.xiaozhi.dao.MessageMapper.add - ==> Parameters: web_test_device(String), 2421428f(String), assistant(String), 3(Integer), 你好！如果你有任何问题或者需要帮助，随时告诉我，我会尽力为你提供帮助。(String), audio/0d720c44bb2a447cb86396e60ead6555.mp3(String)
+20:37:32.047 [OkHttp https://open.bigmodel.cn/...] DEBUG com.xiaozhi.dao.MessageMapper.add - <==    Updates: 1
+20:37:48.609 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0xff61b662, L:/0:0:0:0:0:0:0:0:8091] READ: [id: 0xb151eb2b, L:/127.0.0.1:8091 - R:/127.0.0.1:62087]
+20:37:48.609 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0xff61b662, L:/0:0:0:0:0:0:0:0:8091] READ COMPLETE
+20:37:48.616 [nioEventLoopGroup-3-3] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端连接: /127.0.0.1:62087
+20:37:48.617 [nioEventLoopGroup-3-3] INFO  c.x.w.h.WebSocketHandshakeHandler - WebSocket握手请求 - SessionId: b151eb2b, DeviceId: web_test_device
+20:37:48.639 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0xff61b662, L:/0:0:0:0:0:0:0:0:8091] READ: [id: 0xbd9c4433, L:/127.0.0.1:8091 - R:/127.0.0.1:62088]
+20:37:48.639 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0xff61b662, L:/0:0:0:0:0:0:0:0:8091] READ COMPLETE
+20:37:48.642 [nioEventLoopGroup-3-4] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端连接: /127.0.0.1:62088
+20:37:48.642 [nioEventLoopGroup-3-4] INFO  c.x.w.h.WebSocketHandshakeHandler - WebSocket握手请求 - SessionId: bd9c4433, DeviceId: web_test_device
+20:37:48.649 [nioEventLoopGroup-3-4] DEBUG com.xiaozhi.dao.DeviceMapper.query - ==>  Preparing: SELECT sys_device.deviceId, sys_device.deviceName, sys_device.ip, sys_device.wifiName, sys_device.chipModelName, sys_device.version, sys_device.state, sys_device.userId, sys_device.lastLogin, sys_device.createTime , sys_role.roleId, sys_role.roleName, sys_role.roleDesc, sys_role.voiceName , model_config.configId AS modelId , stt_config.configId AS sttId , tts_config.configId AS ttsId FROM sys_device LEFT JOIN sys_role ON sys_device.roleId = sys_role.roleId LEFT JOIN sys_config model_config ON sys_device.modelId = model_config.configId AND model_config.configType = 'llm' LEFT JOIN sys_config stt_config ON sys_device.sttId = stt_config.configId AND stt_config.configType = 'stt' LEFT JOIN sys_config tts_config ON ttsId = tts_config.configId AND tts_config.configType = 'tts' WHERE 1 = 1 AND deviceId = ?
+20:37:48.649 [nioEventLoopGroup-3-4] DEBUG com.xiaozhi.dao.DeviceMapper.query - ==> Parameters: web_test_device(String)
+20:37:48.650 [nioEventLoopGroup-3-4] DEBUG com.xiaozhi.dao.DeviceMapper.query - <==      Total: 1
+20:37:48.652 [nioEventLoopGroup-3-4] DEBUG com.xiaozhi.dao.DeviceMapper.update - ==>  Preparing: UPDATE sys_device SET state = ?, lastLogin = NOW() WHERE deviceId = ?
+20:37:48.652 [nioEventLoopGroup-3-4] DEBUG com.xiaozhi.dao.DeviceMapper.update - ==> Parameters: 1(String), web_test_device(String)
+20:37:48.654 [nioEventLoopGroup-3-4] DEBUG com.xiaozhi.dao.DeviceMapper.update - <==    Updates: 1
+20:37:48.661 [nioEventLoopGroup-3-4] INFO  c.x.w.h.TextWebSocketFrameHandler - WebSocket连接初始化 - SessionId: bd9c4433, DeviceId: web_test_device
+20:37:48.661 [nioEventLoopGroup-3-4] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端发送消息：msg={"type":"hello","device_id":"web_test_device","device_name":"Web测试设备","device_mac":"00:11:22:33:44:55","token":"your-token1"}
+20:37:48.661 [nioEventLoopGroup-3-4] INFO  c.x.w.h.TextWebSocketFrameHandler - 收到hello消息 - SessionId: bd9c4433
+20:37:48.661 [nioEventLoopGroup-3-4] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端音频参数 - 格式: , 采样率: 0, 声道: 0, 帧时长: 0ms
+20:42:21.616 [nioEventLoopGroup-3-1] DEBUG c.x.w.h.WebSocketHeartbeatHandler - 读空闲超时 - SessionId: dd375696
+20:42:48.624 [nioEventLoopGroup-3-3] DEBUG c.x.w.h.WebSocketHeartbeatHandler - 读空闲超时 - SessionId: b151eb2b
+20:42:48.671 [nioEventLoopGroup-3-4] DEBUG c.x.w.h.WebSocketHeartbeatHandler - 写空闲超时 - SessionId: bd9c4433
+20:42:48.671 [nioEventLoopGroup-3-4] WARN  c.x.w.h.WebSocketHeartbeatHandler - 全空闲超时 - SessionId: bd9c4433, 关闭连接
+20:42:48.676 [nioEventLoopGroup-3-4] DEBUG com.xiaozhi.dao.DeviceMapper.update - ==>  Preparing: UPDATE sys_device SET state = ?, lastLogin = NOW() WHERE deviceId = ?
+20:42:48.676 [nioEventLoopGroup-3-4] DEBUG com.xiaozhi.dao.DeviceMapper.update - ==> Parameters: 0(String), web_test_device(String)
+20:42:48.682 [nioEventLoopGroup-3-4] DEBUG com.xiaozhi.dao.DeviceMapper.update - <==    Updates: 1
+20:42:48.686 [nioEventLoopGroup-3-4] INFO  c.x.w.h.TextWebSocketFrameHandler - WebSocket连接关闭 - SessionId: bd9c4433, DeviceId: web_test_device
+20:42:48.686 [nioEventLoopGroup-3-4] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端断开连接: /127.0.0.1:62088
+20:47:21.627 [nioEventLoopGroup-3-1] DEBUG c.x.w.h.WebSocketHeartbeatHandler - 读空闲超时 - SessionId: dd375696
+20:47:48.634 [nioEventLoopGroup-3-3] DEBUG c.x.w.h.WebSocketHeartbeatHandler - 读空闲超时 - SessionId: b151eb2b
+20:49:09.712 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0xff61b662, L:/0:0:0:0:0:0:0:0:8091] READ: [id: 0x5da382d0, L:/127.0.0.1:8091 - R:/127.0.0.1:64887]
+20:49:09.713 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0xff61b662, L:/0:0:0:0:0:0:0:0:8091] READ COMPLETE
+20:49:09.713 [nioEventLoopGroup-3-1] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端连接: /127.0.0.1:64887
+20:49:09.714 [nioEventLoopGroup-3-1] INFO  c.x.w.h.WebSocketHandshakeHandler - WebSocket握手请求 - SessionId: 5da382d0, DeviceId: web_test_device
+20:49:09.737 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0xff61b662, L:/0:0:0:0:0:0:0:0:8091] READ: [id: 0xbc23329e, L:/127.0.0.1:8091 - R:/127.0.0.1:64888]
+20:49:09.738 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0xff61b662, L:/0:0:0:0:0:0:0:0:8091] READ COMPLETE
+20:49:09.739 [nioEventLoopGroup-3-2] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端连接: /127.0.0.1:64888
+20:49:09.739 [nioEventLoopGroup-3-2] INFO  c.x.w.h.WebSocketHandshakeHandler - WebSocket握手请求 - SessionId: bc23329e, DeviceId: web_test_device
+20:49:09.746 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.query - ==>  Preparing: SELECT sys_device.deviceId, sys_device.deviceName, sys_device.ip, sys_device.wifiName, sys_device.chipModelName, sys_device.version, sys_device.state, sys_device.userId, sys_device.lastLogin, sys_device.createTime , sys_role.roleId, sys_role.roleName, sys_role.roleDesc, sys_role.voiceName , model_config.configId AS modelId , stt_config.configId AS sttId , tts_config.configId AS ttsId FROM sys_device LEFT JOIN sys_role ON sys_device.roleId = sys_role.roleId LEFT JOIN sys_config model_config ON sys_device.modelId = model_config.configId AND model_config.configType = 'llm' LEFT JOIN sys_config stt_config ON sys_device.sttId = stt_config.configId AND stt_config.configType = 'stt' LEFT JOIN sys_config tts_config ON ttsId = tts_config.configId AND tts_config.configType = 'tts' WHERE 1 = 1 AND deviceId = ?
+20:49:09.746 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.query - ==> Parameters: web_test_device(String)
+20:49:09.758 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.query - <==      Total: 1
+20:49:09.760 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.update - ==>  Preparing: UPDATE sys_device SET state = ?, lastLogin = NOW() WHERE deviceId = ?
+20:49:09.760 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.update - ==> Parameters: 1(String), web_test_device(String)
+20:49:09.763 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.update - <==    Updates: 1
+20:49:09.768 [nioEventLoopGroup-3-2] INFO  c.x.w.h.TextWebSocketFrameHandler - WebSocket连接初始化 - SessionId: bc23329e, DeviceId: web_test_device
+20:49:09.768 [nioEventLoopGroup-3-2] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端发送消息：msg={"type":"hello","device_id":"web_test_device","device_name":"Web测试设备","device_mac":"00:11:22:33:44:55","token":"your-token1"}
+20:49:09.768 [nioEventLoopGroup-3-2] INFO  c.x.w.h.TextWebSocketFrameHandler - 收到hello消息 - SessionId: bc23329e
+20:49:09.768 [nioEventLoopGroup-3-2] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端音频参数 - 格式: , 采样率: 0, 声道: 0, 帧时长: 0ms
+20:49:14.834 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.query - ==>  Preparing: SELECT sys_device.deviceId, sys_device.deviceName, sys_device.ip, sys_device.wifiName, sys_device.chipModelName, sys_device.version, sys_device.state, sys_device.userId, sys_device.lastLogin, sys_device.createTime , sys_role.roleId, sys_role.roleName, sys_role.roleDesc, sys_role.voiceName , model_config.configId AS modelId , stt_config.configId AS sttId , tts_config.configId AS ttsId FROM sys_device LEFT JOIN sys_role ON sys_device.roleId = sys_role.roleId LEFT JOIN sys_config model_config ON sys_device.modelId = model_config.configId AND model_config.configType = 'llm' LEFT JOIN sys_config stt_config ON sys_device.sttId = stt_config.configId AND stt_config.configType = 'stt' LEFT JOIN sys_config tts_config ON ttsId = tts_config.configId AND tts_config.configType = 'tts' WHERE 1 = 1 AND deviceId = ?
+20:49:14.835 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.query - ==> Parameters: web_test_device(String)
+20:49:14.838 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.query - <==      Total: 1
+20:49:14.841 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.update - ==>  Preparing: UPDATE sys_device SET state = ?, lastLogin = NOW() WHERE deviceId = ?
+20:49:14.842 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.update - ==> Parameters: 1(String), web_test_device(String)
+20:49:14.843 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.update - <==    Updates: 1
+20:49:14.848 [nioEventLoopGroup-3-2] INFO  c.x.w.h.TextWebSocketFrameHandler - WebSocket连接初始化 - SessionId: bc23329e, DeviceId: web_test_device
+20:49:14.848 [nioEventLoopGroup-3-2] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端发送消息：msg={"type":"listen","mode":"manual","state":"detect","text":"你好"}
+20:49:14.848 [nioEventLoopGroup-3-2] INFO  c.x.w.h.TextWebSocketFrameHandler - 收到listen消息 - SessionId: bc23329e, State: detect, Mode: manual
+20:49:14.848 [nioEventLoopGroup-3-2] INFO  c.x.w.h.TextWebSocketFrameHandler - 检测到唤醒词: 你好
+20:49:14.849 [nioEventLoopGroup-3-2] INFO  c.x.websocket.service.MessageService - 发送消息 - SessionId: bc23329e, Type: stt, State: start, Text: 你好
+20:49:14.850 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.MessageMapper.add - ==>  Preparing: INSERT INTO sys_message ( deviceId, sessionId, sender, roleId, message, audioPath ) SELECT ?, ?, ?, ?, ?, ?
+20:49:14.851 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.MessageMapper.add - ==> Parameters: web_test_device(String), bc23329e(String), user(String), 3(Integer), 你好(String), null
+20:49:14.853 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.MessageMapper.add - <==    Updates: 1
+20:49:18.798 [pool-2-thread-2] INFO  c.x.websocket.service.MessageService - 发送消息 - SessionId: bc23329e, Type: tts, State: start
+20:49:18.799 [pool-1-thread-2] INFO  c.x.websocket.service.MessageService - 发送消息 - SessionId: bc23329e, Type: tts, State: sentence_start, Text: 你好！有什么我可以帮你的吗？
+20:49:18.804 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.update - ==>  Preparing: UPDATE sys_device SET state = ?, lastLogin = NOW() WHERE deviceId = ?
+20:49:18.804 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.update - ==> Parameters: 0(String), web_test_device(String)
+20:49:18.806 [nioEventLoopGroup-3-2] DEBUG com.xiaozhi.dao.DeviceMapper.update - <==    Updates: 1
+20:49:18.809 [nioEventLoopGroup-3-2] INFO  c.x.w.h.TextWebSocketFrameHandler - WebSocket连接关闭 - SessionId: bc23329e, DeviceId: web_test_device
+20:49:18.809 [nioEventLoopGroup-3-2] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端断开连接: /127.0.0.1:64888
+20:49:18.868 [pool-1-thread-2] INFO  c.x.websocket.service.AudioService - 会话已关闭，停止发送音频
+20:49:19.392 [pool-1-thread-2] WARN  c.x.websocket.service.MessageService - 无法发送消息 - 通道不活跃或为null
+20:49:19.392 [pool-1-thread-2] INFO  c.x.websocket.service.AudioService - 会话已关闭，停止发送音频
+20:49:20.185 [OkHttp https://open.bigmodel.cn/...] DEBUG com.xiaozhi.dao.MessageMapper.add - ==>  Preparing: INSERT INTO sys_message ( deviceId, sessionId, sender, roleId, message, audioPath ) SELECT ?, ?, ?, ?, ?, ?
+20:49:20.186 [OkHttp https://open.bigmodel.cn/...] DEBUG com.xiaozhi.dao.MessageMapper.add - ==> Parameters: web_test_device(String), bc23329e(String), assistant(String), 3(Integer), 你好！有什么我可以帮你的吗？如果你有任何问题或者需要帮助，请随时告诉我。(String), audio/3fc8c8c29c3a48da87dca797b08e1925.mp3(String)
+20:49:20.188 [OkHttp https://open.bigmodel.cn/...] DEBUG com.xiaozhi.dao.MessageMapper.add - <==    Updates: 1
+20:52:21.630 [nioEventLoopGroup-3-1] DEBUG c.x.w.h.WebSocketHeartbeatHandler - 读空闲超时 - SessionId: dd375696
+20:52:48.643 [nioEventLoopGroup-3-3] DEBUG c.x.w.h.WebSocketHeartbeatHandler - 读空闲超时 - SessionId: b151eb2b
+20:54:09.719 [nioEventLoopGroup-3-1] DEBUG c.x.w.h.WebSocketHeartbeatHandler - 读空闲超时 - SessionId: 5da382d0
+20:54:17.593 [SpringApplicationShutdownHook] INFO  c.x.w.config.NettyWebSocketConfig - 关闭Netty WebSocket服务器
+20:54:17.594 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0xff61b662, L:/0:0:0:0:0:0:0:0:8091] INACTIVE
+20:54:17.594 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0xff61b662, L:/0:0:0:0:0:0:0:0:8091] UNREGISTERED
+20:54:17.595 [nioEventLoopGroup-3-1] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端断开连接: /127.0.0.1:64887
+20:54:17.595 [nioEventLoopGroup-3-1] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端断开连接: /127.0.0.1:62060
+20:54:17.595 [nioEventLoopGroup-3-3] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端断开连接: /127.0.0.1:62087
+20:54:17.599 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - DatebookHikariCP - Shutdown initiated...
+20:54:17.604 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - DatebookHikariCP - Shutdown completed.
+20:54:22.673 [main] INFO  com.xiaozhi.XiaozhiApplication - Starting XiaozhiApplication using Java 1.8.0_321 on pc-yuchen with PID 21656 (D:\project\java\xiaozhi-esp32-server-java\target\classes started by yc in D:\project\java\xiaozhi-esp32-server-java)
+20:54:22.676 [main] INFO  com.xiaozhi.XiaozhiApplication - The following 1 profile is active: "dev"
+20:54:24.004 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8092 (http)
+20:54:24.013 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8092"]
+20:54:24.014 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+20:54:24.014 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.83]
+20:54:24.268 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+20:54:24.268 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1541 ms
+20:54:25.248 [main] INFO  c.x.w.a.processor.TarsosNoiseReducer - 噪声抑制处理器已初始化
+20:54:25.254 [main] INFO  c.x.w.config.NettyWebSocketConfig - 启动Netty WebSocket服务器，端口：8091，路径：/ws/xiaozhi/v1/
+20:54:25.747 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0x6c164b1c] REGISTERED
+20:54:25.748 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0x6c164b1c] BIND: 0.0.0.0/0.0.0.0:8091
+20:54:25.750 [main] INFO  c.x.w.config.NettyWebSocketConfig - Netty WebSocket服务器启动成功，监听端口: 8091
+20:54:25.752 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0x6c164b1c, L:/0:0:0:0:0:0:0:0:8091] ACTIVE
+20:54:26.241 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+20:54:26.273 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8092"]
+20:54:26.285 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8092 (http) with context path ''
+20:54:26.956 [main] INFO  com.xiaozhi.XiaozhiApplication - ==========================================================
+20:54:26.956 [main] INFO  com.xiaozhi.XiaozhiApplication - Spring Boot服务运行于: http://192.168.8.9:8092
+20:54:26.956 [main] INFO  com.xiaozhi.XiaozhiApplication - WebSocket服务运行于:
+20:54:26.956 [main] INFO  com.xiaozhi.XiaozhiApplication - ws://192.168.8.9:8091/ws/xiaozhi/v1/
+20:54:26.957 [main] INFO  com.xiaozhi.XiaozhiApplication - ==========================================================
+20:54:26.969 [main] INFO  com.xiaozhi.XiaozhiApplication - Started XiaozhiApplication in 4.91 seconds (JVM running for 6.166)
+20:54:26.975 [main] INFO  c.x.w.a.d.impl.SileroVadDetector - 噪声抑制功能已启用
+20:54:26.976 [main] INFO  c.x.w.a.processor.TarsosNoiseReducer - 频谱减法因子已更新为: 1.5
+20:54:26.976 [main] INFO  c.x.w.a.processor.TarsosNoiseReducer - 噪声估计窗口已更新为: 15 帧
+20:54:27.955 [RMI TCP Connection(3)-192.168.8.9] WARN  com.zaxxer.hikari.HikariConfig - DatebookHikariCP - idleTimeout is close to or more than maxLifetime, disabling it.
+20:54:27.955 [RMI TCP Connection(2)-192.168.8.9] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+20:54:27.955 [RMI TCP Connection(3)-192.168.8.9] INFO  com.zaxxer.hikari.HikariDataSource - DatebookHikariCP - Starting...
+20:54:27.955 [RMI TCP Connection(2)-192.168.8.9] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+20:54:27.957 [RMI TCP Connection(2)-192.168.8.9] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+20:54:28.106 [RMI TCP Connection(3)-192.168.8.9] INFO  com.zaxxer.hikari.HikariDataSource - DatebookHikariCP - Start completed.
+21:04:11.790 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0x6c164b1c, L:/0:0:0:0:0:0:0:0:8091] READ: [id: 0xebc6fbb9, L:/127.0.0.1:8091 - R:/127.0.0.1:49620]
+21:04:11.791 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0x6c164b1c, L:/0:0:0:0:0:0:0:0:8091] READ COMPLETE
+21:04:11.835 [nioEventLoopGroup-3-1] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端连接: /127.0.0.1:49620
+21:04:11.859 [nioEventLoopGroup-3-1] INFO  c.x.w.h.WebSocketHandshakeHandler - WebSocket握手请求 - SessionId: ebc6fbb9, DeviceId: web_test_device
+21:04:11.913 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.DeviceMapper.query - ==>  Preparing: SELECT sys_device.deviceId, sys_device.deviceName, sys_device.ip, sys_device.wifiName, sys_device.chipModelName, sys_device.version, sys_device.state, sys_device.userId, sys_device.lastLogin, sys_device.createTime , sys_role.roleId, sys_role.roleName, sys_role.roleDesc, sys_role.voiceName , model_config.configId AS modelId , stt_config.configId AS sttId , tts_config.configId AS ttsId FROM sys_device LEFT JOIN sys_role ON sys_device.roleId = sys_role.roleId LEFT JOIN sys_config model_config ON sys_device.modelId = model_config.configId AND model_config.configType = 'llm' LEFT JOIN sys_config stt_config ON sys_device.sttId = stt_config.configId AND stt_config.configType = 'stt' LEFT JOIN sys_config tts_config ON ttsId = tts_config.configId AND tts_config.configType = 'tts' WHERE 1 = 1 AND deviceId = ?
+21:04:11.926 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.DeviceMapper.query - ==> Parameters: web_test_device(String)
+21:04:11.937 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.DeviceMapper.query - <==      Total: 1
+21:04:11.946 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.DeviceMapper.update - ==>  Preparing: UPDATE sys_device SET state = ?, lastLogin = NOW() WHERE deviceId = ?
+21:04:11.946 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.DeviceMapper.update - ==> Parameters: 1(String), web_test_device(String)
+21:04:11.948 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.DeviceMapper.update - <==    Updates: 1
+21:04:11.952 [nioEventLoopGroup-3-1] INFO  c.x.w.h.TextWebSocketFrameHandler - WebSocket连接初始化 - SessionId: ebc6fbb9, DeviceId: web_test_device
+21:04:11.952 [nioEventLoopGroup-3-1] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端发送消息：msg={"type":"hello","device_id":"web_test_device","device_name":"Web测试设备","device_mac":"00:11:22:33:44:55","token":"your-token1"}
+21:04:11.958 [nioEventLoopGroup-3-1] INFO  c.x.w.h.TextWebSocketFrameHandler - 收到hello消息 - SessionId: ebc6fbb9
+21:04:11.959 [nioEventLoopGroup-3-1] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端音频参数 - 格式: , 采样率: 0, 声道: 0, 帧时长: 0ms
+21:04:15.294 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.DeviceMapper.query - ==>  Preparing: SELECT sys_device.deviceId, sys_device.deviceName, sys_device.ip, sys_device.wifiName, sys_device.chipModelName, sys_device.version, sys_device.state, sys_device.userId, sys_device.lastLogin, sys_device.createTime , sys_role.roleId, sys_role.roleName, sys_role.roleDesc, sys_role.voiceName , model_config.configId AS modelId , stt_config.configId AS sttId , tts_config.configId AS ttsId FROM sys_device LEFT JOIN sys_role ON sys_device.roleId = sys_role.roleId LEFT JOIN sys_config model_config ON sys_device.modelId = model_config.configId AND model_config.configType = 'llm' LEFT JOIN sys_config stt_config ON sys_device.sttId = stt_config.configId AND stt_config.configType = 'stt' LEFT JOIN sys_config tts_config ON ttsId = tts_config.configId AND tts_config.configType = 'tts' WHERE 1 = 1 AND deviceId = ?
+21:04:15.295 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.DeviceMapper.query - ==> Parameters: web_test_device(String)
+21:04:15.297 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.DeviceMapper.query - <==      Total: 1
+21:04:15.298 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.DeviceMapper.update - ==>  Preparing: UPDATE sys_device SET state = ?, lastLogin = NOW() WHERE deviceId = ?
+21:04:15.298 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.DeviceMapper.update - ==> Parameters: 1(String), web_test_device(String)
+21:04:15.303 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.DeviceMapper.update - <==    Updates: 1
+21:04:15.308 [nioEventLoopGroup-3-1] INFO  c.x.w.h.TextWebSocketFrameHandler - WebSocket连接初始化 - SessionId: ebc6fbb9, DeviceId: web_test_device
+21:04:15.308 [nioEventLoopGroup-3-1] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端发送消息：msg={"type":"listen","mode":"manual","state":"detect","text":"你好"}
+21:04:15.308 [nioEventLoopGroup-3-1] INFO  c.x.w.h.TextWebSocketFrameHandler - 收到listen消息 - SessionId: ebc6fbb9, State: detect, Mode: manual
+21:04:15.308 [nioEventLoopGroup-3-1] INFO  c.x.w.h.TextWebSocketFrameHandler - 检测到唤醒词: 你好
+21:04:15.309 [nioEventLoopGroup-3-1] INFO  c.x.websocket.service.MessageService - 发送消息 - SessionId: ebc6fbb9, Type: stt, State: start, Text: 你好
+21:04:15.314 [nioEventLoopGroup-3-1] DEBUG c.x.d.ConfigMapper.selectConfigById - ==>  Preparing: SELECT sys_config.configId, sys_config.userId, sys_config.configName, sys_config.configDesc, sys_config.configType, sys_config.provider, sys_config.appId, sys_config.apiKey, sys_config.apiSecret, sys_config.apiUrl, sys_config.isDefault, sys_config.state, sys_config.createTime FROM sys_config WHERE sys_config.configId = ?
+21:04:15.315 [nioEventLoopGroup-3-1] DEBUG c.x.d.ConfigMapper.selectConfigById - ==> Parameters: 1(Integer)
+21:04:15.316 [nioEventLoopGroup-3-1] DEBUG c.x.d.ConfigMapper.selectConfigById - <==      Total: 1
+21:04:15.864 [nioEventLoopGroup-3-1] DEBUG c.x.dao.RoleMapper.selectRoleById - ==>  Preparing: SELECT sys_role.roleId, sys_role.roleName, sys_role.roleDesc, sys_role.voiceName, sys_role.ttsId, sys_role.userId, sys_role.state, sys_role.createTime FROM sys_role WHERE roleId = ?
+21:04:15.864 [nioEventLoopGroup-3-1] DEBUG c.x.dao.RoleMapper.selectRoleById - ==> Parameters: 3(Integer)
+21:04:15.865 [nioEventLoopGroup-3-1] DEBUG c.x.dao.RoleMapper.selectRoleById - <==      Total: 1
+21:04:15.906 [nioEventLoopGroup-3-1] DEBUG c.x.dao.MessageMapper.query_COUNT - ==>  Preparing: SELECT count(0) FROM sys_message LEFT JOIN sys_device ON sys_message.deviceId = sys_device.deviceId LEFT JOIN sys_role ON sys_device.roleId = sys_role.roleId WHERE sys_message.state = 1 AND sys_message.deviceId = ?
+21:04:15.907 [nioEventLoopGroup-3-1] DEBUG c.x.dao.MessageMapper.query_COUNT - ==> Parameters: web_test_device(String)
+21:04:15.908 [nioEventLoopGroup-3-1] DEBUG c.x.dao.MessageMapper.query_COUNT - <==      Total: 1
+21:04:15.910 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.MessageMapper.query - ==>  Preparing: SELECT sys_message.messageId, sys_message.message, sys_message.sender, sys_message.audioPath, sys_message.state, sys_message.createTime , sys_device.deviceId, sys_device.deviceName, sys_device.userId , sys_role.roleId, sys_role.roleName, sys_role.voiceName FROM sys_message LEFT JOIN sys_device ON sys_message.deviceId = sys_device.deviceId LEFT JOIN sys_role ON sys_device.roleId = sys_role.roleId WHERE sys_message.state = 1 AND sys_message.deviceId = ? ORDER BY sys_message.createTime DESC LIMIT ?
+21:04:15.911 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.MessageMapper.query - ==> Parameters: web_test_device(String), 10(Integer)
+21:04:15.915 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.MessageMapper.query - <==      Total: 10
+21:04:15.915 [nioEventLoopGroup-3-1] INFO  c.x.w.llm.api.AbstractLlmService - 已初始化设备 web_test_device 的历史记录缓存，共 10 条消息
+21:04:15.916 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.MessageMapper.add - ==>  Preparing: INSERT INTO sys_message ( deviceId, sessionId, sender, roleId, message, audioPath ) SELECT ?, ?, ?, ?, ?, ?
+21:04:15.917 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.MessageMapper.add - ==> Parameters: web_test_device(String), ebc6fbb9(String), user(String), 3(Integer), 你好(String), null
+21:04:15.919 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.MessageMapper.add - <==    Updates: 1
+21:04:19.477 [pool-2-thread-1] INFO  c.x.websocket.service.MessageService - 发送消息 - SessionId: ebc6fbb9, Type: tts, State: start
+21:04:19.478 [pool-1-thread-1] INFO  c.x.websocket.service.MessageService - 发送消息 - SessionId: ebc6fbb9, Type: tts, State: sentence_start, Text: 你好！如果你有任何问题或需要帮助，
+21:04:19.485 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.DeviceMapper.update - ==>  Preparing: UPDATE sys_device SET state = ?, lastLogin = NOW() WHERE deviceId = ?
+21:04:19.485 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.DeviceMapper.update - ==> Parameters: 0(String), web_test_device(String)
+21:04:19.487 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.DeviceMapper.update - <==    Updates: 1
+21:04:19.491 [nioEventLoopGroup-3-1] INFO  c.x.w.h.TextWebSocketFrameHandler - WebSocket连接关闭 - SessionId: ebc6fbb9, DeviceId: web_test_device
+21:04:19.492 [nioEventLoopGroup-3-1] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端断开连接: /127.0.0.1:49620
+21:04:19.544 [pool-1-thread-1] INFO  c.x.websocket.service.AudioService - 会话已关闭，停止发送音频
+21:04:21.261 [OkHttp https://open.bigmodel.cn/...] DEBUG com.xiaozhi.dao.MessageMapper.add - ==>  Preparing: INSERT INTO sys_message ( deviceId, sessionId, sender, roleId, message, audioPath ) SELECT ?, ?, ?, ?, ?, ?
+21:04:21.262 [OkHttp https://open.bigmodel.cn/...] DEBUG com.xiaozhi.dao.MessageMapper.add - ==> Parameters: web_test_device(String), ebc6fbb9(String), assistant(String), 3(Integer), 你好！如果你有任何问题或需要帮助，我在这里随时为你服务。请告诉我你的需求。(String), audio/d7895a10ddc24d26933284b1bbfca05f.mp3(String)
+21:04:21.267 [OkHttp https://open.bigmodel.cn/...] DEBUG com.xiaozhi.dao.MessageMapper.add - <==    Updates: 1
+21:12:50.214 [SpringApplicationShutdownHook] INFO  c.x.w.config.NettyWebSocketConfig - 关闭Netty WebSocket服务器
+21:12:50.214 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0x6c164b1c, L:/0:0:0:0:0:0:0:0:8091] INACTIVE
+21:12:50.215 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0x6c164b1c, L:/0:0:0:0:0:0:0:0:8091] UNREGISTERED
+21:12:50.217 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - DatebookHikariCP - Shutdown initiated...
+21:12:50.221 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - DatebookHikariCP - Shutdown completed.
+21:12:54.387 [main] INFO  com.xiaozhi.XiaozhiApplication - Starting XiaozhiApplication using Java 1.8.0_321 on pc-yuchen with PID 30572 (D:\project\java\xiaozhi-esp32-server-java\target\classes started by yc in D:\project\java\xiaozhi-esp32-server-java)
+21:12:54.390 [main] INFO  com.xiaozhi.XiaozhiApplication - The following 1 profile is active: "dev"
+21:12:55.494 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8092 (http)
+21:12:55.500 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8092"]
+21:12:55.502 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+21:12:55.502 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.83]
+21:12:55.622 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+21:12:55.622 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1183 ms
+21:12:56.287 [main] INFO  c.x.w.a.processor.TarsosNoiseReducer - 噪声抑制处理器已初始化
+21:12:56.291 [main] INFO  c.x.w.config.NettyWebSocketConfig - 启动Netty WebSocket服务器，端口：8091，路径：/ws/xiaozhi/v1/
+21:12:56.296 [main] DEBUG i.n.u.i.l.InternalLoggerFactory - Using SLF4J as the default logging framework
+21:12:56.297 [main] DEBUG i.n.c.MultithreadEventLoopGroup - -Dio.netty.eventLoopThreads: 16
+21:12:56.305 [main] DEBUG i.n.u.concurrent.GlobalEventExecutor - -Dio.netty.globalEventExecutor.quietPeriodSeconds: 1
+21:12:56.311 [main] DEBUG i.n.u.i.InternalThreadLocalMap - -Dio.netty.threadLocalMap.stringBuilder.initialSize: 1024
+21:12:56.311 [main] DEBUG i.n.u.i.InternalThreadLocalMap - -Dio.netty.threadLocalMap.stringBuilder.maxSize: 4096
+21:12:56.318 [main] DEBUG i.n.util.internal.PlatformDependent0 - -Dio.netty.noUnsafe: false
+21:12:56.318 [main] DEBUG i.n.util.internal.PlatformDependent0 - Java version: 8
+21:12:56.318 [main] DEBUG i.n.util.internal.PlatformDependent0 - sun.misc.Unsafe.theUnsafe: available
+21:12:56.319 [main] DEBUG i.n.util.internal.PlatformDependent0 - sun.misc.Unsafe.copyMemory: available
+21:12:56.319 [main] DEBUG i.n.util.internal.PlatformDependent0 - sun.misc.Unsafe.storeFence: available
+21:12:56.319 [main] DEBUG i.n.util.internal.PlatformDependent0 - java.nio.Buffer.address: available
+21:12:56.320 [main] DEBUG i.n.util.internal.PlatformDependent0 - direct buffer constructor: available
+21:12:56.321 [main] DEBUG i.n.util.internal.PlatformDependent0 - java.nio.Bits.unaligned: available, true
+21:12:56.321 [main] DEBUG i.n.util.internal.PlatformDependent0 - jdk.internal.misc.Unsafe.allocateUninitializedArray(int): unavailable prior to Java9
+21:12:56.321 [main] DEBUG i.n.util.internal.PlatformDependent0 - java.nio.DirectByteBuffer.<init>(long, {int,long}): available
+21:12:56.321 [main] DEBUG i.n.util.internal.PlatformDependent - sun.misc.Unsafe: available
+21:12:56.321 [main] DEBUG i.n.util.internal.PlatformDependent - -Dio.netty.tmpdir: C:\Users\37010\AppData\Local\Temp (java.io.tmpdir)
+21:12:56.321 [main] DEBUG i.n.util.internal.PlatformDependent - -Dio.netty.bitMode: 64 (sun.arch.data.model)
+21:12:56.321 [main] DEBUG i.n.util.internal.PlatformDependent - Platform: Windows
+21:12:56.322 [main] DEBUG i.n.util.internal.PlatformDependent - -Dio.netty.maxDirectMemory: 3780640768 bytes
+21:12:56.322 [main] DEBUG i.n.util.internal.PlatformDependent - -Dio.netty.uninitializedArrayAllocationThreshold: -1
+21:12:56.323 [main] DEBUG io.netty.util.internal.CleanerJava6 - java.nio.ByteBuffer.cleaner(): available
+21:12:56.323 [main] DEBUG i.n.util.internal.PlatformDependent - -Dio.netty.noPreferDirect: false
+21:12:56.324 [main] DEBUG io.netty.channel.nio.NioEventLoop - -Dio.netty.noKeySetOptimization: false
+21:12:56.324 [main] DEBUG io.netty.channel.nio.NioEventLoop - -Dio.netty.selectorAutoRebuildThreshold: 512
+21:12:56.326 [main] DEBUG i.n.util.internal.PlatformDependent - org.jctools-core.MpscChunkedArrayQueue: available
+21:12:56.359 [main] DEBUG io.netty.channel.DefaultChannelId - -Dio.netty.processId: 30572 (auto-detected)
+21:12:56.360 [main] DEBUG io.netty.util.NetUtil - -Djava.net.preferIPv4Stack: false
+21:12:56.360 [main] DEBUG io.netty.util.NetUtil - -Djava.net.preferIPv6Addresses: false
+21:12:56.667 [main] DEBUG io.netty.util.NetUtilInitializations - Loopback interface: lo (Software Loopback Interface 1, 127.0.0.1)
+21:12:56.668 [main] DEBUG io.netty.util.NetUtil - Failed to get SOMAXCONN from sysctl and file \proc\sys\net\core\somaxconn. Default: 200
+21:12:56.684 [main] DEBUG io.netty.channel.DefaultChannelId - -Dio.netty.machineId: 38:00:25:ff:fe:84:8a:b4 (auto-detected)
+21:12:56.692 [main] DEBUG io.netty.util.ResourceLeakDetector - -Dio.netty.leakDetection.level: simple
+21:12:56.692 [main] DEBUG io.netty.util.ResourceLeakDetector - -Dio.netty.leakDetection.targetRecords: 4
+21:12:56.703 [main] DEBUG i.n.buffer.PooledByteBufAllocator - -Dio.netty.allocator.numHeapArenas: 16
+21:12:56.703 [main] DEBUG i.n.buffer.PooledByteBufAllocator - -Dio.netty.allocator.numDirectArenas: 16
+21:12:56.703 [main] DEBUG i.n.buffer.PooledByteBufAllocator - -Dio.netty.allocator.pageSize: 8192
+21:12:56.703 [main] DEBUG i.n.buffer.PooledByteBufAllocator - -Dio.netty.allocator.maxOrder: 9
+21:12:56.703 [main] DEBUG i.n.buffer.PooledByteBufAllocator - -Dio.netty.allocator.chunkSize: 4194304
+21:12:56.703 [main] DEBUG i.n.buffer.PooledByteBufAllocator - -Dio.netty.allocator.smallCacheSize: 256
+21:12:56.704 [main] DEBUG i.n.buffer.PooledByteBufAllocator - -Dio.netty.allocator.normalCacheSize: 64
+21:12:56.704 [main] DEBUG i.n.buffer.PooledByteBufAllocator - -Dio.netty.allocator.maxCachedBufferCapacity: 32768
+21:12:56.704 [main] DEBUG i.n.buffer.PooledByteBufAllocator - -Dio.netty.allocator.cacheTrimInterval: 8192
+21:12:56.704 [main] DEBUG i.n.buffer.PooledByteBufAllocator - -Dio.netty.allocator.cacheTrimIntervalMillis: 0
+21:12:56.704 [main] DEBUG i.n.buffer.PooledByteBufAllocator - -Dio.netty.allocator.useCacheForAllThreads: false
+21:12:56.704 [main] DEBUG i.n.buffer.PooledByteBufAllocator - -Dio.netty.allocator.maxCachedByteBuffersPerChunk: 1023
+21:12:56.711 [main] DEBUG io.netty.buffer.ByteBufUtil - -Dio.netty.allocator.type: pooled
+21:12:56.711 [main] DEBUG io.netty.buffer.ByteBufUtil - -Dio.netty.threadLocalDirectBufferSize: 0
+21:12:56.711 [main] DEBUG io.netty.buffer.ByteBufUtil - -Dio.netty.maxThreadLocalCharBufferSize: 16384
+21:12:56.712 [main] DEBUG i.n.b.ChannelInitializerExtensions - -Dio.netty.bootstrap.extensions: null
+21:12:56.724 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0x0f8c93bf] REGISTERED
+21:12:56.725 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0x0f8c93bf] BIND: 0.0.0.0/0.0.0.0:8091
+21:12:56.726 [main] INFO  c.x.w.config.NettyWebSocketConfig - Netty WebSocket服务器启动成功，监听端口: 8091
+21:12:56.727 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0x0f8c93bf, L:/0:0:0:0:0:0:0:0:8091] ACTIVE
+21:12:57.132 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+21:12:57.156 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8092"]
+21:12:57.166 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8092 (http) with context path ''
+21:12:57.771 [main] INFO  com.xiaozhi.XiaozhiApplication - ==========================================================
+21:12:57.772 [main] INFO  com.xiaozhi.XiaozhiApplication - Spring Boot服务运行于: http://192.168.8.9:8092
+21:12:57.772 [main] INFO  com.xiaozhi.XiaozhiApplication - WebSocket服务运行于:
+21:12:57.772 [main] INFO  com.xiaozhi.XiaozhiApplication - ws://192.168.8.9:8091/ws/xiaozhi/v1/
+21:12:57.772 [main] INFO  com.xiaozhi.XiaozhiApplication - ==========================================================
+21:12:57.785 [main] INFO  com.xiaozhi.XiaozhiApplication - Started XiaozhiApplication in 3.891 seconds (JVM running for 4.949)
+21:12:57.792 [main] INFO  c.x.w.a.d.impl.SileroVadDetector - 噪声抑制功能已启用
+21:12:57.792 [main] INFO  c.x.w.a.processor.TarsosNoiseReducer - 频谱减法因子已更新为: 1.5
+21:12:57.792 [main] INFO  c.x.w.a.processor.TarsosNoiseReducer - 噪声估计窗口已更新为: 15 帧
+21:12:58.810 [RMI TCP Connection(2)-192.168.8.9] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+21:12:58.811 [RMI TCP Connection(2)-192.168.8.9] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+21:12:58.811 [RMI TCP Connection(3)-192.168.8.9] WARN  com.zaxxer.hikari.HikariConfig - DatebookHikariCP - idleTimeout is close to or more than maxLifetime, disabling it.
+21:12:58.811 [RMI TCP Connection(3)-192.168.8.9] INFO  com.zaxxer.hikari.HikariDataSource - DatebookHikariCP - Starting...
+21:12:58.812 [RMI TCP Connection(2)-192.168.8.9] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+21:12:58.946 [RMI TCP Connection(3)-192.168.8.9] INFO  com.zaxxer.hikari.HikariDataSource - DatebookHikariCP - Start completed.
+21:13:12.545 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0x0f8c93bf, L:/0:0:0:0:0:0:0:0:8091] READ: [id: 0x97b082cc, L:/127.0.0.1:8091 - R:/127.0.0.1:50379]
+21:13:12.546 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0x0f8c93bf, L:/0:0:0:0:0:0:0:0:8091] READ COMPLETE
+21:13:12.556 [nioEventLoopGroup-3-1] DEBUG io.netty.buffer.AbstractByteBuf - -Dio.netty.buffer.checkAccessible: true
+21:13:12.556 [nioEventLoopGroup-3-1] DEBUG io.netty.buffer.AbstractByteBuf - -Dio.netty.buffer.checkBounds: true
+21:13:12.557 [nioEventLoopGroup-3-1] DEBUG i.n.util.ResourceLeakDetectorFactory - Loaded default ResourceLeakDetector: io.netty.util.ResourceLeakDetector@63be82d
+21:13:12.586 [nioEventLoopGroup-3-1] DEBUG i.n.h.c.compression.ZlibCodecFactory - -Dio.netty.noJdkZlibDecoder: false
+21:13:12.586 [nioEventLoopGroup-3-1] DEBUG i.n.h.c.compression.ZlibCodecFactory - -Dio.netty.noJdkZlibEncoder: false
+21:13:12.589 [nioEventLoopGroup-3-1] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端连接: /127.0.0.1:50379
+21:13:12.592 [nioEventLoopGroup-3-1] DEBUG io.netty.util.Recycler - -Dio.netty.recycler.maxCapacityPerThread: 4096
+21:13:12.593 [nioEventLoopGroup-3-1] DEBUG io.netty.util.Recycler - -Dio.netty.recycler.ratio: 8
+21:13:12.593 [nioEventLoopGroup-3-1] DEBUG io.netty.util.Recycler - -Dio.netty.recycler.chunkSize: 32
+21:13:12.593 [nioEventLoopGroup-3-1] DEBUG io.netty.util.Recycler - -Dio.netty.recycler.blocking: false
+21:13:12.593 [nioEventLoopGroup-3-1] DEBUG io.netty.util.Recycler - -Dio.netty.recycler.batchFastThreadLocalOnly: true
+21:13:12.612 [nioEventLoopGroup-3-1] INFO  c.x.w.h.WebSocketHandshakeHandler - WebSocket握手请求 - SessionId: 97b082cc, DeviceId: web_test_device
+21:13:12.615 [nioEventLoopGroup-3-1] DEBUG i.n.h.c.h.w.WebSocketServerHandshaker - [id: 0x97b082cc, L:/127.0.0.1:8091 - R:/127.0.0.1:50379] WebSocket version V13 server handshake
+21:13:12.617 [nioEventLoopGroup-3-1] DEBUG i.n.h.c.h.w.WebSocketServerHandshaker - WebSocket version 13 server handshake key: 9JjoVHz3Z/8Z+oubHPgPRA==, response: dgXKjc0w+GsGnHp/kW5aCFbD4D8=
+21:13:12.659 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.DeviceMapper.query - ==>  Preparing: SELECT sys_device.deviceId, sys_device.deviceName, sys_device.ip, sys_device.wifiName, sys_device.chipModelName, sys_device.version, sys_device.state, sys_device.userId, sys_device.lastLogin, sys_device.createTime , sys_role.roleId, sys_role.roleName, sys_role.roleDesc, sys_role.voiceName , model_config.configId AS modelId , stt_config.configId AS sttId , tts_config.configId AS ttsId FROM sys_device LEFT JOIN sys_role ON sys_device.roleId = sys_role.roleId LEFT JOIN sys_config model_config ON sys_device.modelId = model_config.configId AND model_config.configType = 'llm' LEFT JOIN sys_config stt_config ON sys_device.sttId = stt_config.configId AND stt_config.configType = 'stt' LEFT JOIN sys_config tts_config ON ttsId = tts_config.configId AND tts_config.configType = 'tts' WHERE 1 = 1 AND deviceId = ?
+21:13:12.672 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.DeviceMapper.query - ==> Parameters: web_test_device(String)
+21:13:12.698 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.DeviceMapper.query - <==      Total: 1
+21:13:12.707 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.DeviceMapper.update - ==>  Preparing: UPDATE sys_device SET state = ?, lastLogin = NOW() WHERE deviceId = ?
+21:13:12.708 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.DeviceMapper.update - ==> Parameters: 1(String), web_test_device(String)
+21:13:12.710 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.DeviceMapper.update - <==    Updates: 1
+21:13:12.715 [nioEventLoopGroup-3-1] INFO  c.x.w.h.TextWebSocketFrameHandler - WebSocket连接初始化 - SessionId: 97b082cc, DeviceId: web_test_device
+21:13:12.716 [nioEventLoopGroup-3-1] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端发送消息：msg={"type":"hello","device_id":"web_test_device","device_name":"Web测试设备","device_mac":"00:11:22:33:44:55","token":"your-token1"}
+21:13:12.722 [nioEventLoopGroup-3-1] INFO  c.x.w.h.TextWebSocketFrameHandler - 收到hello消息 - SessionId: 97b082cc
+21:13:12.722 [nioEventLoopGroup-3-1] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端音频参数 - 格式: , 采样率: 0, 声道: 0, 帧时长: 0ms
+21:13:12.731 [nioEventLoopGroup-3-1] ERROR c.x.w.h.WebSocketExceptionHandler - WebSocket处理异常 - SessionId: 97b082cc, DeviceId: web_test_device, 异常: refCnt: 0, decrement: 1
+io.netty.util.IllegalReferenceCountException: refCnt: 0, decrement: 1
+	at io.netty.util.internal.ReferenceCountUpdater.toLiveRealRefCnt(ReferenceCountUpdater.java:83)
+	at io.netty.util.internal.ReferenceCountUpdater.release(ReferenceCountUpdater.java:148)
+	at io.netty.buffer.AbstractReferenceCountedByteBuf.release(AbstractReferenceCountedByteBuf.java:101)
+	at io.netty.buffer.DefaultByteBufHolder.release(DefaultByteBufHolder.java:111)
+	at io.netty.util.ReferenceCountUtil.release(ReferenceCountUtil.java:90)
+	at io.netty.channel.SimpleChannelInboundHandler.channelRead(SimpleChannelInboundHandler.java:106)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:444)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:412)
+	at io.netty.handler.timeout.IdleStateHandler.channelRead(IdleStateHandler.java:286)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:442)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:412)
+	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:103)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:444)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:412)
+	at io.netty.channel.ChannelInboundHandlerAdapter.channelRead(ChannelInboundHandlerAdapter.java:93)
+	at io.netty.handler.codec.http.websocketx.Utf8FrameValidator.channelRead(Utf8FrameValidator.java:89)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:444)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:412)
+	at com.xiaozhi.websocket.handler.WebSocketHandshakeHandler.channelRead(WebSocketHandshakeHandler.java:57)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:444)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:412)
+	at io.netty.handler.codec.ByteToMessageDecoder.fireChannelRead(ByteToMessageDecoder.java:346)
+	at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:318)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:444)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:412)
+	at io.netty.channel.DefaultChannelPipeline$HeadContext.channelRead(DefaultChannelPipeline.java:1410)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:440)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420)
+	at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:919)
+	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:166)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:788)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:724)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:650)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:562)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.lang.Thread.run(Thread.java:750)
+21:13:46.252 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.DeviceMapper.query - ==>  Preparing: SELECT sys_device.deviceId, sys_device.deviceName, sys_device.ip, sys_device.wifiName, sys_device.chipModelName, sys_device.version, sys_device.state, sys_device.userId, sys_device.lastLogin, sys_device.createTime , sys_role.roleId, sys_role.roleName, sys_role.roleDesc, sys_role.voiceName , model_config.configId AS modelId , stt_config.configId AS sttId , tts_config.configId AS ttsId FROM sys_device LEFT JOIN sys_role ON sys_device.roleId = sys_role.roleId LEFT JOIN sys_config model_config ON sys_device.modelId = model_config.configId AND model_config.configType = 'llm' LEFT JOIN sys_config stt_config ON sys_device.sttId = stt_config.configId AND stt_config.configType = 'stt' LEFT JOIN sys_config tts_config ON ttsId = tts_config.configId AND tts_config.configType = 'tts' WHERE 1 = 1 AND deviceId = ?
+21:13:46.253 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.DeviceMapper.query - ==> Parameters: web_test_device(String)
+21:13:46.256 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.DeviceMapper.query - <==      Total: 1
+21:13:46.258 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.DeviceMapper.update - ==>  Preparing: UPDATE sys_device SET state = ?, lastLogin = NOW() WHERE deviceId = ?
+21:13:46.258 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.DeviceMapper.update - ==> Parameters: 1(String), web_test_device(String)
+21:13:46.260 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.DeviceMapper.update - <==    Updates: 1
+21:13:46.268 [nioEventLoopGroup-3-1] INFO  c.x.w.h.TextWebSocketFrameHandler - WebSocket连接初始化 - SessionId: 97b082cc, DeviceId: web_test_device
+21:13:46.269 [nioEventLoopGroup-3-1] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端发送消息：msg={"type":"listen","mode":"manual","state":"detect","text":"你好"}
+21:13:46.269 [nioEventLoopGroup-3-1] INFO  c.x.w.h.TextWebSocketFrameHandler - 收到listen消息 - SessionId: 97b082cc, State: detect, Mode: manual
+21:13:46.269 [nioEventLoopGroup-3-1] INFO  c.x.w.h.TextWebSocketFrameHandler - 检测到唤醒词: 你好
+21:13:46.270 [nioEventLoopGroup-3-1] INFO  c.x.websocket.service.MessageService - 发送消息 - SessionId: 97b082cc, Type: stt, State: start, Text: 你好
+21:13:46.275 [nioEventLoopGroup-3-1] DEBUG c.x.d.ConfigMapper.selectConfigById - ==>  Preparing: SELECT sys_config.configId, sys_config.userId, sys_config.configName, sys_config.configDesc, sys_config.configType, sys_config.provider, sys_config.appId, sys_config.apiKey, sys_config.apiSecret, sys_config.apiUrl, sys_config.isDefault, sys_config.state, sys_config.createTime FROM sys_config WHERE sys_config.configId = ?
+21:13:46.275 [nioEventLoopGroup-3-1] DEBUG c.x.d.ConfigMapper.selectConfigById - ==> Parameters: 1(Integer)
+21:13:46.277 [nioEventLoopGroup-3-1] DEBUG c.x.d.ConfigMapper.selectConfigById - <==      Total: 1
+21:13:46.771 [nioEventLoopGroup-3-1] DEBUG c.x.dao.RoleMapper.selectRoleById - ==>  Preparing: SELECT sys_role.roleId, sys_role.roleName, sys_role.roleDesc, sys_role.voiceName, sys_role.ttsId, sys_role.userId, sys_role.state, sys_role.createTime FROM sys_role WHERE roleId = ?
+21:13:46.772 [nioEventLoopGroup-3-1] DEBUG c.x.dao.RoleMapper.selectRoleById - ==> Parameters: 3(Integer)
+21:13:46.773 [nioEventLoopGroup-3-1] DEBUG c.x.dao.RoleMapper.selectRoleById - <==      Total: 1
+21:13:46.812 [nioEventLoopGroup-3-1] DEBUG c.x.dao.MessageMapper.query_COUNT - ==>  Preparing: SELECT count(0) FROM sys_message LEFT JOIN sys_device ON sys_message.deviceId = sys_device.deviceId LEFT JOIN sys_role ON sys_device.roleId = sys_role.roleId WHERE sys_message.state = 1 AND sys_message.deviceId = ?
+21:13:46.812 [nioEventLoopGroup-3-1] DEBUG c.x.dao.MessageMapper.query_COUNT - ==> Parameters: web_test_device(String)
+21:13:46.814 [nioEventLoopGroup-3-1] DEBUG c.x.dao.MessageMapper.query_COUNT - <==      Total: 1
+21:13:46.816 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.MessageMapper.query - ==>  Preparing: SELECT sys_message.messageId, sys_message.message, sys_message.sender, sys_message.audioPath, sys_message.state, sys_message.createTime , sys_device.deviceId, sys_device.deviceName, sys_device.userId , sys_role.roleId, sys_role.roleName, sys_role.voiceName FROM sys_message LEFT JOIN sys_device ON sys_message.deviceId = sys_device.deviceId LEFT JOIN sys_role ON sys_device.roleId = sys_role.roleId WHERE sys_message.state = 1 AND sys_message.deviceId = ? ORDER BY sys_message.createTime DESC LIMIT ?
+21:13:46.816 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.MessageMapper.query - ==> Parameters: web_test_device(String), 10(Integer)
+21:13:46.820 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.MessageMapper.query - <==      Total: 10
+21:13:46.820 [nioEventLoopGroup-3-1] INFO  c.x.w.llm.api.AbstractLlmService - 已初始化设备 web_test_device 的历史记录缓存，共 10 条消息
+21:13:46.821 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.MessageMapper.add - ==>  Preparing: INSERT INTO sys_message ( deviceId, sessionId, sender, roleId, message, audioPath ) SELECT ?, ?, ?, ?, ?, ?
+21:13:46.822 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.MessageMapper.add - ==> Parameters: web_test_device(String), 97b082cc(String), user(String), 3(Integer), 你好(String), null
+21:13:46.829 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.MessageMapper.add - <==    Updates: 1
+21:13:46.850 [nioEventLoopGroup-3-1] ERROR c.x.w.h.WebSocketExceptionHandler - WebSocket处理异常 - SessionId: 97b082cc, DeviceId: web_test_device, 异常: refCnt: 0, decrement: 1
+io.netty.util.IllegalReferenceCountException: refCnt: 0, decrement: 1
+	at io.netty.util.internal.ReferenceCountUpdater.toLiveRealRefCnt(ReferenceCountUpdater.java:83)
+	at io.netty.util.internal.ReferenceCountUpdater.release(ReferenceCountUpdater.java:148)
+	at io.netty.buffer.AbstractReferenceCountedByteBuf.release(AbstractReferenceCountedByteBuf.java:101)
+	at io.netty.buffer.DefaultByteBufHolder.release(DefaultByteBufHolder.java:111)
+	at io.netty.util.ReferenceCountUtil.release(ReferenceCountUtil.java:90)
+	at io.netty.channel.SimpleChannelInboundHandler.channelRead(SimpleChannelInboundHandler.java:106)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:444)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:412)
+	at io.netty.handler.timeout.IdleStateHandler.channelRead(IdleStateHandler.java:286)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:442)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:412)
+	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:103)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:444)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:412)
+	at io.netty.channel.ChannelInboundHandlerAdapter.channelRead(ChannelInboundHandlerAdapter.java:93)
+	at io.netty.handler.codec.http.websocketx.Utf8FrameValidator.channelRead(Utf8FrameValidator.java:89)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:444)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:412)
+	at com.xiaozhi.websocket.handler.WebSocketHandshakeHandler.channelRead(WebSocketHandshakeHandler.java:57)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:444)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:412)
+	at io.netty.handler.codec.ByteToMessageDecoder.fireChannelRead(ByteToMessageDecoder.java:346)
+	at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:318)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:444)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:412)
+	at io.netty.channel.DefaultChannelPipeline$HeadContext.channelRead(DefaultChannelPipeline.java:1410)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:440)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420)
+	at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:919)
+	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:166)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:788)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:724)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:650)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:562)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.lang.Thread.run(Thread.java:750)
+21:13:50.474 [pool-2-thread-1] INFO  c.x.websocket.service.MessageService - 发送消息 - SessionId: 97b082cc, Type: tts, State: start
+21:13:50.475 [pool-1-thread-1] INFO  c.x.websocket.service.MessageService - 发送消息 - SessionId: 97b082cc, Type: tts, State: sentence_start, Text: 你好！有什么我可以帮助你的吗？
+21:13:50.480 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.DeviceMapper.update - ==>  Preparing: UPDATE sys_device SET state = ?, lastLogin = NOW() WHERE deviceId = ?
+21:13:50.481 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.DeviceMapper.update - ==> Parameters: 0(String), web_test_device(String)
+21:13:50.486 [nioEventLoopGroup-3-1] DEBUG com.xiaozhi.dao.DeviceMapper.update - <==    Updates: 1
+21:13:50.494 [nioEventLoopGroup-3-1] INFO  c.x.w.h.TextWebSocketFrameHandler - WebSocket连接关闭 - SessionId: 97b082cc, DeviceId: web_test_device
+21:13:50.495 [nioEventLoopGroup-3-1] INFO  c.x.w.h.TextWebSocketFrameHandler - 客户端断开连接: /127.0.0.1:50379
+21:13:50.538 [pool-1-thread-1] INFO  c.x.websocket.service.AudioService - 会话已关闭，停止发送音频
+21:13:52.332 [OkHttp https://open.bigmodel.cn/...] DEBUG com.xiaozhi.dao.MessageMapper.add - ==>  Preparing: INSERT INTO sys_message ( deviceId, sessionId, sender, roleId, message, audioPath ) SELECT ?, ?, ?, ?, ?, ?
+21:13:52.333 [OkHttp https://open.bigmodel.cn/...] DEBUG com.xiaozhi.dao.MessageMapper.add - ==> Parameters: web_test_device(String), 97b082cc(String), assistant(String), 3(Integer), 你好！有什么我可以帮助你的吗？如果你有任何问题或者需要信息，随时告诉我！(String), audio/93de42ac0b004cbe932e9148c612b6a6.mp3(String)
+21:13:52.339 [OkHttp https://open.bigmodel.cn/...] DEBUG com.xiaozhi.dao.MessageMapper.add - <==    Updates: 1
+21:15:00.048 [SpringApplicationShutdownHook] INFO  c.x.w.config.NettyWebSocketConfig - 关闭Netty WebSocket服务器
+21:15:00.048 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0x0f8c93bf, L:/0:0:0:0:0:0:0:0:8091] INACTIVE
+21:15:00.048 [nioEventLoopGroup-2-1] INFO  i.n.handler.logging.LoggingHandler - [id: 0x0f8c93bf, L:/0:0:0:0:0:0:0:0:8091] UNREGISTERED
+21:15:00.049 [nioEventLoopGroup-3-1] DEBUG io.netty.buffer.PoolThreadCache - Freed 12 thread-local buffer(s) from thread: nioEventLoopGroup-3-1
+21:15:00.051 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - DatebookHikariCP - Shutdown initiated...
+21:15:00.057 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - DatebookHikariCP - Shutdown completed.

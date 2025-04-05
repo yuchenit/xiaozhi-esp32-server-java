@@ -1,24 +1,19 @@
 package com.xiaozhi.websocket.handler;
 
+import cn.hutool.extra.spring.SpringUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xiaozhi.entity.SysConfig;
 import com.xiaozhi.entity.SysDevice;
 import com.xiaozhi.service.SysConfigService;
 import com.xiaozhi.websocket.llm.LlmManager;
-import com.xiaozhi.websocket.service.AudioService;
-import com.xiaozhi.websocket.service.MessageService;
-import com.xiaozhi.websocket.service.SpeechToTextService;
-import com.xiaozhi.websocket.service.TextToSpeechService;
-import com.xiaozhi.websocket.service.VadService;
-
+import com.xiaozhi.websocket.service.*;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
@@ -34,26 +29,19 @@ public class BinaryWebSocketFrameHandler extends SimpleChannelInboundHandler<Bin
 
   private static final Logger logger = LoggerFactory.getLogger(BinaryWebSocketFrameHandler.class);
 
-  @Autowired
-  private VadService vadService;
+  private final VadService vadService = SpringUtil.getBean(VadService.class);
 
-  @Autowired
-  private AudioService audioService;
+  private final AudioService audioService = SpringUtil.getBean(AudioService.class);
 
-  @Autowired
-  private MessageService messageService;
+  private final LlmManager llmManager = SpringUtil.getBean(LlmManager.class);
 
-  @Autowired
-  private SpeechToTextService speechToTextService;
+  private final MessageService messageService = SpringUtil.getBean(MessageService.class);
 
-  @Autowired
-  private TextToSpeechService textToSpeechService;
+  private final TextToSpeechService textToSpeechService = SpringUtil.getBean(TextToSpeechService.class);
 
-  @Autowired
-  private LlmManager llmManager;
+  private final SpeechToTextService speechToTextService = SpringUtil.getBean(SpeechToTextService.class);
 
-  @Autowired
-  private SysConfigService configService;
+  private final SysConfigService configService = SpringUtil.getBean(SysConfigService.class);
 
   private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -94,8 +82,6 @@ public class BinaryWebSocketFrameHandler extends SimpleChannelInboundHandler<Bin
     } catch (Exception e) {
       logger.error("处理二进制消息失败", e);
     }
-    // 继续处理请求
-    ctx.fireChannelRead(frame);
   }
 
   /**
