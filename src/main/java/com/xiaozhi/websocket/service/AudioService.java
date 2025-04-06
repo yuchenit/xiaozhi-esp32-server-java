@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.LockSupport;
 
 import static com.xiaozhi.websocket.handler.WebSocketHandshakeHandler.SESSION_ID;
@@ -42,7 +43,7 @@ public class AudioService {
             audioQueues = new ConcurrentHashMap<>();
 
     // 跟踪每个会话的发送状态
-    private final ConcurrentHashMap<String, Boolean> isProcessingMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, AtomicBoolean> isProcessingMap = new ConcurrentHashMap<>();
 
     @Resource
     private MessageService messageService;
@@ -53,10 +54,6 @@ public class AudioService {
     @Autowired
     @Qualifier("baseThreadPool")
     private ExecutorService baseThreadPool;
-
-    @Autowired
-    @Qualifier("audioScheduledExecutor")
-    private ScheduledExecutorService audioScheduled;
 
     @Autowired
     @Qualifier("audioCleanupExecutor")
@@ -124,13 +121,13 @@ public class AudioService {
     }
 
     /**
-     * 初始化会话的音频处理
+     * 初始化音频队列
      */
     public void initializeSession(String sessionId) {
-        // 初始化音频队列和处理状态
-        logger.info("初始化音频队列和处理状态,sessionId = {}",sessionId);
-        audioQueues.computeIfAbsent(sessionId, k -> new LinkedBlockingQueue<>());
-        isProcessingMap.putIfAbsent(sessionId, false);
+        // 初始化音频队列,不存在时,新建语音队列
+//        logger.info("初始化音频队列和处理状态, sessionId = {}", sessionId);
+        audioQueues.putIfAbsent(sessionId, new LinkedBlockingQueue<>());
+        isProcessingMap.putIfAbsent(sessionId, new AtomicBoolean(false));
     }
 
     /**
@@ -164,7 +161,7 @@ public class AudioService {
      * @return 处理结果，包含opus数据和持续时间
      */
     public AudioProcessResult processAudioFile(String audioFilePath, int sampleRate, int channels) throws Exception {
-        logger.info("预处理音频文件，提取PCM数据并转换为Opus格式");
+//        logger.info("预处理音频文件，提取PCM数据并转换为Opus格式");
         // 从MP3获取PCM数据
         byte[] pcmData = extractPcmFromAudio(audioFilePath,"s16le",sampleRate);
         long durationMs = calculateDuration(pcmData, sampleRate, channels);
@@ -250,17 +247,13 @@ public class AudioService {
      */
     public void sendAudio(Channel channel, String audioFilePath, String text, boolean isFirstText,
             boolean isLastText) {
-        logger.info("将音频添加到发送队列异步发送,text={},audioFilePath={}",text,audioFilePath);
         if (channel == null || !channel.isActive()) {
             logger.info("sendAudio 通道不活跃，无法发送音频");
             return;
         }
-
         String sessionId = channel.attr(SESSION_ID).get();
-
         // 确保会话已初始化
         initializeSession(sessionId);
-
         // 异步预处理音频
         baseThreadPool.submit(() -> {
             try {
@@ -279,112 +272,17 @@ public class AudioService {
                 // 添加到发送队列
                 audioQueues.get(sessionId).add(task);
                 if (isFirstText) {
-                    logger.info("发送开始信号开始信号,sessionId={}",sessionId);
                     sendStart(channel);
                 }
-                // 如果当前没有处理任务,开始处理,设为true,(多线程安全)
-                if (Boolean.FALSE.equals(isProcessingMap.putIfAbsent(sessionId, true))) {
-                    logger.info("开始处理音频任务, sessionId: {},text={}", sessionId,text);
+
+                // 如果当前没有处理任务，开始处理
+                if (isProcessingMap.get(sessionId).compareAndSet(false, true)) {
                     processNextAudio(channel);
                 }
             } catch (Exception e) {
                 logger.error("音频预处理失败: {}", e.getMessage(), e);
                 // 处理失败时，尝试清理会话
                 cleanupSession(sessionId);
-            }
-        });
-    }
-
-    /**
-     * 处理队列中的下一个音频任务
-     */
-    private void processNextAudio(Channel channel) {
-        final String sessionId = channel.attr(SESSION_ID).get();
-        final BlockingQueue<ProcessedAudioTask> queue = audioQueues.get(sessionId);
-
-        if (queue == null) {
-            logger.error("音频队列未初始化 - SessionId: {}", sessionId);
-            return;
-        }
-
-        // 检查队列是否为空
-        ProcessedAudioTask task = queue.poll();
-
-        if (task == null) {
-            // 队列为空，设置处理状态为false
-            isProcessingMap.put(sessionId,false);
-            return;
-        }
-
-        // 异步处理音频任务
-        baseThreadPool.submit(() -> {
-            try {
-                sendSentenceStart(channel, task.getText());
-
-                // 获取已处理的Opus帧
-                List<byte[]> opusFrames = task.getOpusFrames();
-
-                // 开始发送音频帧
-                long startTime = System.nanoTime();
-                long playPosition = 0;
-
-                for (int i = 0; i < opusFrames.size(); i++) {
-                    byte[] frame = opusFrames.get(i);
-
-                    // 计算预期发送时间（纳秒）
-                    long expectedTime = startTime + (playPosition * 1_000_000);
-                    long currentTime = System.nanoTime();
-                    long delayNanos = expectedTime - currentTime;
-
-                    // 执行延迟
-                    if (delayNanos > 0) {
-                        // 转换为毫秒和纳秒余数
-                        long delayMillis = delayNanos / 1_000_000;
-                        int delayNanosRemainder = (int) (delayNanos % 1_000_000);
-
-                        if (delayMillis > 0 || delayNanosRemainder > 0) {
-                            Thread.sleep(delayMillis, delayNanosRemainder);
-                        }
-                    }
-
-                    // 再次检查会话是否仍然打开
-                    if (channel.isActive()) {
-                        // 直接发送Opus帧
-                        ByteBuf buf = Unpooled.wrappedBuffer(frame);
-                        BinaryWebSocketFrame frameBuf = new BinaryWebSocketFrame(buf);
-                        channel.writeAndFlush(frameBuf).addListener(future -> {
-                            if (!future.isSuccess()) {
-                                logger.warn("帧发送失败 - Cause: {}", future.cause().getMessage());
-                            }
-                        });
-
-                        // 更新播放位置（毫秒）
-                        playPosition += FRAME_DURATION_MS;
-                    } else {
-                        logger.info("会话已关闭，停止发送音频");
-                        cleanupSession(sessionId);
-                        return;
-                    }
-                }
-
-                // 删除音频文件
-                cleanupTaskResources(task.getOriginalFilePath());
-
-                // 发送句子结束消息
-                if (channel.isActive()) {
-                    if (task.isLastText()) {
-                        // 使用内部方法发送停止指令，避免触发清空队列
-                        sendStop(channel);
-                    }
-                }
-
-                // 处理下一个音频任务
-                processNextAudio(channel);
-
-            } catch (Exception e) {
-                logger.error("发送音频数据时发生错误: {}", e.getMessage(), e);
-                // 出错时也尝试处理下一个任务
-                processNextAudio(channel);
             }
         });
     }
@@ -399,25 +297,24 @@ public class AudioService {
      * 4. 完善资源清理
      * 5. 添加流量控制
      */
-/*    private void processNextAudio(Channel channel) {
+    private void processNextAudio(Channel channel) {
         final String sessionId = channel.attr(SESSION_ID).get();
         final BlockingQueue<ProcessedAudioTask> queue = audioQueues.get(sessionId);
         if (queue == null) {
             logger.error("音频队列未初始化 - SessionId: {}", sessionId);
+            isProcessingMap.remove(sessionId);
+            return;
+        }
+        // 非阻塞获取任务
+        ProcessedAudioTask task = queue.poll();
+        if (task == null) {
+            // 队列为空，设置处理状态为false
+            isProcessingMap.get(sessionId).set(false);
             return;
         }
         baseThreadPool.execute(() -> {
-            ProcessedAudioTask task = null;
             try {
-                // 非阻塞获取任务
-                task = queue.poll();
-                if (task == null) {
-                    isProcessingMap.put(sessionId, false);
-                    logger.debug("音频队列为空 - SessionId: {}", sessionId);
-                    return;
-                }
-
-                logger.debug("开始发送文本消息 - SessionId: {}, Text: {}", sessionId, task.getText());
+//                logger.debug("开始发送文本消息 - SessionId: {}, Text: {}", sessionId, task.getText());
                 sendSentenceStart(channel, task.getText());
 
                 // 高精度帧发送控制
@@ -427,20 +324,24 @@ public class AudioService {
                 if (task.isLastText() && channel.isActive()) {
                     logger.debug("发送会话结束信号 - SessionId: {}", sessionId);
                     sendStop(channel);
+                    return;
                 }
 
-                // 递归处理下一个任务（非立即执行，避免堆栈溢出）
-                audioScheduled.schedule(() -> processNextAudio(channel), 10, TimeUnit.MILLISECONDS);
+                processNextAudio(channel);
+
             } catch (Exception e) {
                 logger.error("音频任务处理异常 - SessionId: {}, Error: {}", sessionId, e.getMessage(), e);
+                processNextAudio(channel);
             } finally {
-                // 资源清理
-                if (task != null) {
-                    cleanupTaskResources(task.getOriginalFilePath());
+                // 队列为空，重置状态
+                if (queue.isEmpty()) {
+                    isProcessingMap.get(sessionId).set(false);
                 }
+                // 资源清理
+                cleanupTaskResources(task.getOriginalFilePath());
             }
         });
-    }*/
+    }
 
     /**
      * 高精度音频帧发送（核心优化）
@@ -472,20 +373,17 @@ public class AudioService {
 
             // 发送帧数据
             ByteBuf frameBuf = Unpooled.wrappedBuffer(task.getOpusFrames().get(i));
-            channel.writeAndFlush(frameBuf).addListener(future -> {
-                if (!future.isSuccess()) {
-                    logger.warn("帧发送失败 - Cause: {}", future.cause().getMessage());
-                }
-            });
+            BinaryWebSocketFrame webSocketFrame = new BinaryWebSocketFrame(frameBuf);
+            channel.writeAndFlush(webSocketFrame);
 
             // 每10帧检查一次背压
-            if (i % 10 == 0 && channel.bytesBeforeUnwritable() < frameBuf.readableBytes() * 5L) {
+            /*if (i % 10 == 0 && channel.bytesBeforeUnwritable() < frameBuf.readableBytes() * 5L) {
                 logger.debug("背压控制 - 暂停发送等待缓冲区");
                 channel.flush();
                 while (!channel.isWritable()) {
                     LockSupport.parkNanos(frameIntervalNs);
                 }
-            }
+            }*/
         }
     }
 
@@ -497,7 +395,7 @@ public class AudioService {
         if (StrUtil.isEmpty(audioPath)) {
             return;
         }
-        logger.info("删除音频文件及其相关文件,audioPath = {}",audioPath);
+//        logger.info("删除音频文件及其相关文件,audioPath = {}",audioPath);
         // 删除原始音频文件
         try {
             Files.deleteIfExists(Paths.get(audioPath));
@@ -544,7 +442,7 @@ public class AudioService {
         BlockingQueue<ProcessedAudioTask> queue = audioQueues.get(sessionId);
         if (queue != null) {
             // 异步删除文件
-            baseThreadPool.submit(() -> {
+            cleanupExecutor.submit(() -> {
                 queue.forEach(task -> {
                     if (ObjectUtil.isNotNull(task) && StrUtil.isNotEmpty(task.getOriginalFilePath())) {
                         cleanupTaskResources(task.getOriginalFilePath());

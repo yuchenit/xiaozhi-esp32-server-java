@@ -247,7 +247,10 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
     // 使用句子切分处理流式响应
     llmManager.chatStreamBySentence(device, text, (sentence, isStart, isEnd) -> {
       try {
+        // 1. 文本转语音
         String audioPath = textToSpeechService.textToSpeech(sentence, null, device.getVoiceName());
+
+        // 2. 发送音频
         audioService.sendAudio(ctx.channel(), audioPath, sentence, isStart, isEnd);
       } catch (Exception e) {
         logger.error("处理句子失败: {}", e.getMessage(), e);

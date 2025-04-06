@@ -10,9 +10,12 @@ import com.xiaozhi.websocket.llm.memory.ChatMemory;
 import com.xiaozhi.websocket.llm.memory.ModelContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
 
 /**
@@ -28,6 +31,10 @@ public class LlmManager {
 
     @Autowired
     private ChatMemory chatMemory;
+
+    @Autowired
+    @Qualifier("baseThreadPool")
+    private ExecutorService baseThreadPool;
 
     // 设备LLM服务缓存，每个设备只保留一个服务
     private ConcurrentHashMap<String, LlmService> deviceLlmServices = new ConcurrentHashMap<>();
@@ -88,8 +95,15 @@ public class LlmManager {
                     device.getRoleId(),
                     chatMemory);
 
-            // 调用LLM流式接口
-            llmService.chatStream(message, modelContext, streamListener);
+            baseThreadPool.execute(()->{
+                // 调用LLM流式接口
+                try {
+                    llmService.chatStream(message, modelContext, streamListener);
+                } catch (IOException e) {
+                    log.error("处理流式查询时出错: {}", e.getMessage(), e);
+                    streamListener.onError(e);
+                }
+            });
 
         } catch (Exception e) {
             log.error("处理流式查询时出错: {}", e.getMessage(), e);
@@ -152,7 +166,6 @@ public class LlmManager {
      */
     public void chatStreamBySentence(SysDevice device, String message,
             TriConsumer<String, Boolean, Boolean> sentenceHandler) {
-        log.info("分段处理文本,message={}",message);
         try {
             final SentenceProcessor processor = new SentenceProcessor(sentenceHandler);
 
@@ -194,15 +207,17 @@ public class LlmManager {
      * @return LLM服务
      */
     public LlmService getLlmService(String deviceId, Integer configId) {
-        // 检查设备是否已有服务且配置ID不同
-        Integer currentConfigId = deviceConfigIds.get(deviceId);
-        if (currentConfigId != null && !currentConfigId.equals(configId)) {
-            // 配置ID变更，移除旧服务
-            deviceLlmServices.remove(deviceId);
-        }
+        baseThreadPool.execute(()->{
+            // 检查设备是否已有服务且配置ID不同
+            Integer currentConfigId = deviceConfigIds.get(deviceId);
+            if (currentConfigId != null && !currentConfigId.equals(configId)) {
+                // 配置ID变更，移除旧服务
+                deviceLlmServices.remove(deviceId);
+            }
 
-        // 更新设备当前使用的configId
-        deviceConfigIds.put(deviceId, configId);
+            // 更新设备当前使用的configId
+            deviceConfigIds.put(deviceId, configId);
+        });
 
         // 获取或创建服务
         return deviceLlmServices.computeIfAbsent(deviceId, k -> createLlmService(configId));

@@ -3,8 +3,8 @@ package com.xiaozhi.websocket.llm.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xiaozhi.entity.SysMessage;
 import com.xiaozhi.websocket.llm.memory.ModelContext;
-import okhttp3.OkHttpClient;
 import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
  * 实现一些通用功能
  */
 public abstract class AbstractLlmService implements LlmService {
+
     protected static final Logger logger = LoggerFactory.getLogger(AbstractLlmService.class);
     protected static final ObjectMapper objectMapper = new ObjectMapper();
     protected static final OkHttpClient client = new OkHttpClient.Builder()
@@ -32,7 +33,7 @@ public abstract class AbstractLlmService implements LlmService {
     protected static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     // 设备历史记录缓存，键为deviceId，值为该设备的历史消息
-    protected Map<String, List<SysMessage>> deviceHistoryCache = new ConcurrentHashMap<>();
+    protected ConcurrentHashMap<String, List<SysMessage>> deviceHistoryCache = new ConcurrentHashMap<>();
 
     // 历史记录默认限制数量
     protected static final int DEFAULT_HISTORY_LIMIT = 10;
@@ -67,8 +68,8 @@ public abstract class AbstractLlmService implements LlmService {
     protected void initializeHistory(ModelContext modelContext) {
         String deviceId = modelContext.getDeviceId();
         if (!deviceHistoryCache.containsKey(deviceId)) {
-            // 从数据库加载历史记录
-            List<SysMessage> history = modelContext.getMessages(DEFAULT_HISTORY_LIMIT); // 这里后期可以设置 limit，来自定义历史记录条数
+            // 从数据库加载历史记录,可以设置 limit，来自定义历史记录条数
+            List<SysMessage> history = modelContext.getMessages(DEFAULT_HISTORY_LIMIT);
             deviceHistoryCache.put(deviceId, history);
             logger.info("已初始化设备 {} 的历史记录缓存，共 {} 条消息", deviceId, history.size());
         }

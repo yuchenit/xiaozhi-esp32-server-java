@@ -24,7 +24,8 @@ public class LlmServiceFactory {
      * @param model 模型名称
      * @return LLM服务
      */
-    public static LlmService createLlmService(String provider, String endpoint, String appId, String apiKey, String apiSecret, String model) {
+    public static LlmService createLlmService(String provider, String endpoint, String appId,
+                                              String apiKey, String apiSecret, String model) {
         provider = provider.toLowerCase();
         
         switch (provider) {

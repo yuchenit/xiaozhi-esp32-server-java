@@ -41,9 +41,9 @@ public class MessageService {
             response.put("state", state);
 
             channel.writeAndFlush(new TextWebSocketFrame(response.toString()));
-            logger.info("发送消息 - SessionId: {}, Type: {}, State: {}", sessionId, type, state);
+            logger.info("消息发送成功 - SessionId: {}, Type: {}, State: {}", sessionId, type, state);
         } catch (Exception e) {
-            logger.error("发送消息时发生异常: {}", e.getMessage(), e);
+            logger.error("消息发送异常: {}", e.getMessage(), e);
         }
     }
 
