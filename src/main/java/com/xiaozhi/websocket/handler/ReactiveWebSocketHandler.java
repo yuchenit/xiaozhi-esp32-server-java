@@ -86,7 +86,8 @@ public class ReactiveWebSocketHandler implements WebSocketHandler {
         logger.info(session.getHandshakeInfo().getHeaders().toString());
 
         // 从请求头中获取设备ID
-        String deviceId = session.getHandshakeInfo().getHeaders().getFirst("device-Id");
+        String deviceIdTmp = session.getHandshakeInfo().getHeaders().getFirst("device-Id");
+        String deviceId = deviceIdTmp == null ? "test_web_device" : deviceIdTmp;
         if (deviceId == null) {
             logger.error("设备ID为空");
             return session.close();
@@ -326,10 +327,10 @@ public class ReactiveWebSocketHandler implements WebSocketHandler {
         logger.info("收到hello消息 - SessionId: {}", session.getId());
 
         // 验证客户端hello消息
-        if (!jsonNode.path("transport").asText().equals("websocket")) {
+        /*if (!jsonNode.path("transport").asText().equals("websocket")) {
             logger.warn("不支持的传输方式: {}", jsonNode.path("transport").asText());
             return session.close();
-        }
+        }*/
 
         // 解析音频参数
         JsonNode audioParams = jsonNode.path("audio_params");
@@ -345,6 +346,7 @@ public class ReactiveWebSocketHandler implements WebSocketHandler {
         ObjectNode response = objectMapper.createObjectNode();
         response.put("type", "hello");
         response.put("transport", "websocket");
+        response.put("session_id", session.getId());
 
         // 添加音频参数（可以根据服务器配置调整）
         ObjectNode responseAudioParams = response.putObject("audio_params");
