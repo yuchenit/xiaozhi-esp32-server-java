@@ -124,7 +124,7 @@ public class AudioService {
      * 初始化音频队列
      */
     public void initializeSession(String sessionId) {
-        // 初始化音频队列,不存在时,新建语音队列
+        // 初始化音频队列,不存在时,新建语音队列,已存在时不变
 //        logger.info("初始化音频队列和处理状态, sessionId = {}", sessionId);
         audioQueues.putIfAbsent(sessionId, new LinkedBlockingQueue<>());
         isProcessingMap.putIfAbsent(sessionId, new AtomicBoolean(false));
@@ -273,11 +273,10 @@ public class AudioService {
                 audioQueues.get(sessionId).add(task);
                 if (isFirstText) {
                     sendStart(channel);
-                }
-
-                // 如果当前没有处理任务，开始处理
-                if (isProcessingMap.get(sessionId).compareAndSet(false, true)) {
-                    processNextAudio(channel);
+                    // 如果当前没有处理任务，开始处理,确保从第一个句子开始
+                    if (isProcessingMap.get(sessionId).compareAndSet(false, true)) {
+                        processNextAudio(channel);
+                    }
                 }
             } catch (Exception e) {
                 logger.error("音频预处理失败: {}", e.getMessage(), e);
