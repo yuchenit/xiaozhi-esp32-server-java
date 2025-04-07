@@ -8,7 +8,10 @@ import com.xiaozhi.service.SysConfigService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -61,7 +64,13 @@ public class SysConfigServiceImpl implements SysConfigService {
         if (config.getLimit() != null && config.getLimit() > 0) {
             PageHelper.startPage(config.getStart(), config.getLimit());
         }
-        return configMapper.query(config);
+        // 这里为了适配阿里云的 Token 刷新，返回的结果会有重复
+        List<SysConfig> configs = configMapper.query(config);
+        Map<Integer, SysConfig> uniqueConfigs = new LinkedHashMap<>();
+        for (SysConfig c : configs) {
+            uniqueConfigs.put(c.getConfigId(), c); // 利用 Map 的键唯一特性去重
+        }
+        return new ArrayList<>(uniqueConfigs.values());
     }
 
     /**
