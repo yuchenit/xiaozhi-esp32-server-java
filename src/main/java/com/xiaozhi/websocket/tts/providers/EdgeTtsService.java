@@ -61,8 +61,8 @@ public class EdgeTtsService implements TtsService {
                 .trans();
 
         // 2. 转换原始MP3为指定采样率和通道数的MP3
-        //convertAndSaveAudio(outputPath + audioFilePath, 16000, 1);
-        AudioUtils.convertAndSaveAudio(outputPath + audioFilePath,
+//        edgeTtsMp3ByCmd(outputPath + audioFilePath, 16000, 1);
+        AudioUtils.ttsEdgeMp3(outputPath + audioFilePath,
                 "libmp3lame",16000,1);
         return outputPath + audioFilePath;
     }
@@ -70,7 +70,7 @@ public class EdgeTtsService implements TtsService {
     /**
      * 使用FFmpeg将原始音频转换为指定采样率和通道数的MP3
      */
-    private void convertAndSaveAudio(String audioFilePath, int sampleRate, int channels) throws Exception {
+    private void ttsEdgeMp3Cmd(String audioFilePath, int sampleRate, int channels) throws Exception {
         // 创建临时文件路径
         String tempFilePath = audioFilePath + ".tmp";
         // 使用FFmpeg直接转换音频

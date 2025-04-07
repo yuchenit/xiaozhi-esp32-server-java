@@ -164,7 +164,7 @@ public class AudioService {
     public AudioProcessResult processAudioFile(String audioFilePath, int sampleRate, int channels) throws Exception {
 //        logger.info("预处理音频文件，提取PCM数据并转换为Opus格式");
         // 从MP3获取PCM数据
-        byte[] pcmData = AudioUtils.extractPcmFromAudioFfmpeg(audioFilePath,"s16le",sampleRate,channels);
+        byte[] pcmData = AudioUtils.getPcmFormMp3(audioFilePath,"s16le",sampleRate,channels);
         long durationMs = calculateDuration(pcmData, sampleRate, channels);
 
         // 转换为Opus格式
@@ -177,7 +177,7 @@ public class AudioService {
     /**
      * 从音频文件提取PCM数据
      */
-    private byte[] extractPcmFromAudio(String audioFilePath,String outputFormat, int sampleRate) throws Exception {
+    private byte[] getPcmFormMp3ByCmd(String audioFilePath,String outputFormat, int sampleRate) throws Exception {
         // 创建临时PCM文件
         File tempPcmFile = null;
         try {
