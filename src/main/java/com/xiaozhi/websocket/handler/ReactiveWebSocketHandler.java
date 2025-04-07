@@ -22,15 +22,12 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.socket.WebSocketHandler;
 import org.springframework.web.reactive.socket.WebSocketMessage;
 import org.springframework.web.reactive.socket.WebSocketSession;
-
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import java.net.URI;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class ReactiveWebSocketHandler implements WebSocketHandler {
@@ -228,10 +225,10 @@ public class ReactiveWebSocketHandler implements WebSocketHandler {
         logger.info("收到hello消息 - SessionId: {}", session.getId());
 
         // 验证客户端hello消息
-        if (!jsonNode.path("transport").asText().equals("websocket")) {
+        /*if (!jsonNode.path("transport").asText().equals("websocket")) {
             logger.warn("不支持的传输方式: {}", jsonNode.path("transport").asText());
             return session.close();
-        }
+        }*/
 
         // 解析音频参数
         JsonNode audioParams = jsonNode.path("audio_params");
@@ -247,6 +244,7 @@ public class ReactiveWebSocketHandler implements WebSocketHandler {
         ObjectNode response = objectMapper.createObjectNode();
         response.put("type", "hello");
         response.put("transport", "websocket");
+        response.put("session_id",session.getId());
 
         // 添加音频参数（可以根据服务器配置调整）
         ObjectNode responseAudioParams = response.putObject("audio_params");
