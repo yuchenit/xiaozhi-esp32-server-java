@@ -3,6 +3,7 @@ package com.xiaozhi.websocket.service;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.xiaozhi.utils.AudioUtils;
 import com.xiaozhi.websocket.audio.processor.OpusProcessor;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -163,7 +164,7 @@ public class AudioService {
     public AudioProcessResult processAudioFile(String audioFilePath, int sampleRate, int channels) throws Exception {
 //        logger.info("预处理音频文件，提取PCM数据并转换为Opus格式");
         // 从MP3获取PCM数据
-        byte[] pcmData = extractPcmFromAudio(audioFilePath,"s16le",sampleRate);
+        byte[] pcmData = AudioUtils.extractPcmFromAudioFfmpeg(audioFilePath,"s16le",sampleRate,channels);
         long durationMs = calculateDuration(pcmData, sampleRate, channels);
 
         // 转换为Opus格式

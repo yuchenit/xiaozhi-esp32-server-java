@@ -1,17 +1,21 @@
 package com.xiaozhi.utils;
 
+import cn.hutool.core.io.FileUtil;
 import org.bytedeco.ffmpeg.global.avcodec;
 import org.bytedeco.ffmpeg.global.avutil;
 import org.bytedeco.javacpp.Loader;
+import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.FFmpegFrameRecorder;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameRecorder;
 import org.slf4j.Logger;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.ShortBuffer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.UUID;
 
 public class AudioUtils {
@@ -25,7 +29,7 @@ public class AudioUtils {
 
     /**
      * 将原始音频数据保存为MP3文件
-     * 
+     *
      * @param audio 音频数据
      * @return 文件名
      *
@@ -84,7 +88,7 @@ public class AudioUtils {
 
     /**
      * 将原始音频数据保存为WAV文件
-     * 
+     *
      * @param audioData 音频数据
      * @return 文件名
      *
@@ -130,6 +134,140 @@ public class AudioUtils {
             logger.error("写入WAV文件时发生错误", e);
         }
         return null;
+    }
+
+    /**
+     * 从音频文件提取PCM数据
+     * @param audioFilePath 音频文件路径： audio/2d073bd2a0d5471789956469411a8dd3.mp3
+     * @param outputFormat   输出格式，默认 "s16le"
+     * @param sampleRate    采样率,默认 16000
+     * @param channels      通道数，默认 1
+     */
+    public static byte[] extractPcmFromAudioCommand(String audioFilePath, String outputFormat, int sampleRate, int channels) throws Exception {
+        // 创建临时PCM文件
+        File tempPcmFile = null;
+        try {
+            // 创建临时PCM文件
+            tempPcmFile = File.createTempFile("temp_pcm_extract_", "." + outputFormat);
+            String tempPcmPath = tempPcmFile.getAbsolutePath();
+            // 使用FFmpeg直接将MP3转换为PCM
+            String[] command = {
+                    "ffmpeg",
+                    "-i", audioFilePath,
+                    "-f", outputFormat, // 16位有符号小端格式
+                    "-ar", String.valueOf(sampleRate), // 采样率
+                    "-acodec", "pcm_"+outputFormat,
+                    "-y",
+                    tempPcmPath
+            };
+            // 执行FFmpeg命令
+            ProcessBuilder pb = new ProcessBuilder(command);
+            pb.redirectErrorStream(true);
+            Process process = pb.start();
+
+            // 等待进程完成
+            int exitCode = process.waitFor();
+            if (exitCode != 0) {
+                logger.error("FFmpeg提取PCM数据失败，退出码: {}", exitCode);
+                throw new RuntimeException("PCM数据提取失败");
+            }
+
+            // 读取PCM文件内容
+            return FileUtil.readBytes(tempPcmFile);
+        }catch (Exception e){
+            logger.error("提取PCM数据时发生错误: {}", e.getMessage(), e);
+            throw e;
+        }finally {
+            // 删除临时文件
+            if (tempPcmFile != null) {
+                Files.deleteIfExists(Paths.get(tempPcmFile.getAbsolutePath()));
+            }
+        }
+    }
+
+    /**
+     * 从音频文件中提取PCM数据（自动资源管理版）
+     * 使用FFmpegFrameGrabber代替ffmpeg命令行工具
+     *
+     * @param audioFilePath 音频文件路径： audio/2d073bd2a0d5471789956469411a8dd3.mp3
+     * @param outputFormat   输出格式，默认 "s16le"
+     * @param sampleRate    采样率,默认 16000
+     * @param channels      通道数，默认 1
+     */
+    public static byte[] extractPcmFromAudioFfmpeg(String audioFilePath, String outputFormat, int sampleRate, int channels) throws IOException {
+        try (FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(audioFilePath);
+             ByteArrayOutputStream byteStream = new ByteArrayOutputStream()){
+
+            // 基本配置
+            grabber.setAudioChannels(channels);
+            grabber.setSampleRate(sampleRate);
+            grabber.setSampleFormat(avutil.AV_SAMPLE_FMT_S16);
+            // 16位有符号小端格式
+            grabber.setAudioOption("acodec", "pcm_" + outputFormat);
+            // 启动grabber
+            grabber.start();
+
+            ByteBuffer byteBuffer = ByteBuffer.allocate(4096).order(ByteOrder.LITTLE_ENDIAN);
+            Frame audioFrame;
+
+            while ((audioFrame = grabber.grabFrame(true, false, true, false)) != null) {
+                if (audioFrame.samples == null) continue;
+
+                for (Object buffer : audioFrame.samples) {
+                    ShortBuffer shortBuffer = (ShortBuffer) buffer;
+                    shortBuffer.rewind();
+
+                    // 直接写入ByteBuffer，减少内存分配
+                    byteBuffer.clear();
+                    while (shortBuffer.hasRemaining()) {
+                        if (!byteBuffer.hasRemaining()) {
+                            byteStream.write(byteBuffer.array(), 0, byteBuffer.position());
+                            byteBuffer.clear();
+                        }
+                        byteBuffer.putShort(shortBuffer.get());
+                    }
+                    byteStream.write(byteBuffer.array(), 0, byteBuffer.position());
+                }
+            }
+            return byteStream.toByteArray();
+        }
+    }
+
+    /**
+     * 从音频文件中提取PCM数据（自动资源管理版）
+     * 使用FFmpegFrameGrabber代替ffmpeg命令行工具
+     *
+     * @param audioFilePath 音频文件路径： audio/2d073bd2a0d5471789956469411a8dd3.mp3
+     * @param outputFormat   输出格式，默认 "s16le"
+     * @param sampleRate    采样率,默认 16000
+     * @param channels      通道数，默认 1
+     */
+    public static void convertAndSaveAudio(String audioFilePath, String outputFormat, int sampleRate, int channels){
+        // 创建临时文件路径
+        String tempFilePath = audioFilePath + ".tmp";
+        // 使用FFmpegFrameGrabber读取原始音频
+        try(FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(audioFilePath);
+            FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(tempFilePath, channels)){
+            // 创建FFmpegFrameRecorder用于写入转换后的音频
+            recorder.setAudioChannels(channels);
+            recorder.setSampleRate(sampleRate);
+            recorder.setAudioCodec(org.bytedeco.ffmpeg.global.avcodec.AV_CODEC_ID_MP3);
+            recorder.setAudioQuality(2);
+            recorder.setFormat("mp3");
+            recorder.start();
+            // 开始读取音频
+            grabber.start();
+            // 转换并写入音频帧
+            Frame frame;
+            while ((frame = grabber.grab()) != null) {
+                if (frame.samples != null) {
+                    recorder.record(frame);
+                }
+            }
+        }catch (Exception e) {
+            logger.error("FFmpeg转换音频失败，e: {}", e.getMessage());
+            throw new RuntimeException("音频转换失败");
+        }
     }
 
 }

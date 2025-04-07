@@ -1,8 +1,12 @@
 package com.xiaozhi.websocket.tts.providers;
 
+import com.xiaozhi.utils.AudioUtils;
+import com.xiaozhi.websocket.tts.TtsService;
 import io.github.whitemagic2014.tts.TTS;
 import io.github.whitemagic2014.tts.TTSVoice;
 import io.github.whitemagic2014.tts.bean.Voice;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,11 +14,6 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.xiaozhi.websocket.tts.TtsService;
 
 public class EdgeTtsService implements TtsService {
     private static final Logger logger = LoggerFactory.getLogger(EdgeTtsService.class);
@@ -62,8 +61,9 @@ public class EdgeTtsService implements TtsService {
                 .trans();
 
         // 2. 转换原始MP3为指定采样率和通道数的MP3
-        convertAndSaveAudio(outputPath + audioFilePath, 16000, 1);
-
+        //convertAndSaveAudio(outputPath + audioFilePath, 16000, 1);
+        AudioUtils.convertAndSaveAudio(outputPath + audioFilePath,
+                "libmp3lame",16000,1);
         return outputPath + audioFilePath;
     }
     
