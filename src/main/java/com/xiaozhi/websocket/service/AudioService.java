@@ -335,7 +335,7 @@ public class AudioService {
             } finally {
                 // 队列为空，重置状态
                 if (queue.isEmpty()) {
-                    isProcessingMap.get(sessionId).set(false);
+                    isProcessingMap.remove(sessionId);
                 }
                 // 资源清理
                 cleanupTaskResources(task.getOriginalFilePath());
