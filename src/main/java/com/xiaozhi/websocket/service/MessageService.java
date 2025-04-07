@@ -29,7 +29,7 @@ public class MessageService {
      */
     public void sendMessage(Channel channel, String type, String state) {
         if (channel == null || !channel.isActive()) {
-            logger.warn("无法发送消息 - 通道不活跃或为null");
+            logger.warn("无法发送消息 - 通道不可用或为null");
             return;
         }
 
@@ -57,7 +57,7 @@ public class MessageService {
      */
     public void sendMessage(Channel channel, String type, String state, String text) {
         if (channel == null || !channel.isActive()) {
-            logger.warn("无法发送消息 - 通道不活跃或为null");
+            logger.warn("无法发送消息 - 通道不可用或为null");
             return;
         }
 

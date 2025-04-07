@@ -248,7 +248,8 @@ public class AudioService {
     public void sendAudio(Channel channel, String audioFilePath, String text, boolean isFirstText,
             boolean isLastText) {
         if (channel == null || !channel.isActive()) {
-            logger.info("sendAudio 通道不活跃，无法发送音频");
+            logger.warn("通道不可用,终止发送,清理当前任务资源");
+            cleanupTaskResources(audioFilePath);
             return;
         }
         String sessionId = channel.attr(SESSION_ID).get();
@@ -273,13 +274,13 @@ public class AudioService {
                 audioQueues.get(sessionId).add(task);
                 if (isFirstText) {
                     sendStart(channel);
-                    // 如果当前没有处理任务，开始处理,确保从第一个句子开始
-                    if (isProcessingMap.get(sessionId).compareAndSet(false, true)) {
-                        processNextAudio(channel);
-                    }
+                }
+                // 如果当前没有处理任务，开始处理,确保从第一个句子开始
+                if (isProcessingMap.get(sessionId).compareAndSet(false, true)) {
+                    processNextAudio(channel);
                 }
             } catch (Exception e) {
-                logger.error("音频预处理失败: {}", e.getMessage(), e);
+                logger.error("音频预处理失败,终止发送,清理当前任务资源: {}", e.getMessage(), e);
                 // 处理失败时，尝试清理会话
                 cleanupSession(sessionId);
             }
@@ -298,10 +299,15 @@ public class AudioService {
      */
     private void processNextAudio(Channel channel) {
         final String sessionId = channel.attr(SESSION_ID).get();
+        // 通道状态检查
+        if (!channel.isActive()) {
+            logger.warn("通道不可用,终止发送,清理当前任务资源 - ChannelActive: {}", channel.isActive());
+            cleanupSession(sessionId);
+            return;
+        }
         final BlockingQueue<ProcessedAudioTask> queue = audioQueues.get(sessionId);
         if (queue == null) {
             logger.error("音频队列未初始化 - SessionId: {}", sessionId);
-            isProcessingMap.remove(sessionId);
             return;
         }
         // 非阻塞获取任务
@@ -311,6 +317,7 @@ public class AudioService {
             isProcessingMap.get(sessionId).set(false);
             return;
         }
+
         baseThreadPool.execute(() -> {
             try {
 //                logger.debug("开始发送文本消息 - SessionId: {}, Text: {}", sessionId, task.getText());
@@ -332,11 +339,7 @@ public class AudioService {
                 logger.error("音频任务处理异常 - SessionId: {}, Error: {}", sessionId, e.getMessage(), e);
                 processNextAudio(channel);
             } finally {
-                // 队列为空，重置状态
-                if (queue.isEmpty()) {
-                    isProcessingMap.remove(sessionId);
-                }
-                // 资源清理
+                // 清理当前队列资源
                 cleanupTaskResources(task.getOriginalFilePath());
             }
         });
@@ -349,7 +352,9 @@ public class AudioService {
         final long frameIntervalNs = TimeUnit.MILLISECONDS.toNanos(FRAME_DURATION_MS);
         final long startTime = System.nanoTime();
 
-        for (int i = 0; i < task.getOpusFrames().size(); i++) {
+        List<byte[]> opusFrames = task.getOpusFrames();
+
+        for (int i = 0; i < opusFrames.size(); i++) {
             // 通道状态检查
             if (!channel.isActive() || !channel.isWritable()) {
                 logger.warn("通道不可用，中断发送 - ChannelActive: {}, Writable: {}",
@@ -371,7 +376,7 @@ public class AudioService {
             }
 
             // 发送帧数据
-            ByteBuf frameBuf = Unpooled.wrappedBuffer(task.getOpusFrames().get(i));
+            ByteBuf frameBuf = Unpooled.wrappedBuffer(opusFrames.get(i));
             BinaryWebSocketFrame webSocketFrame = new BinaryWebSocketFrame(frameBuf);
             channel.writeAndFlush(webSocketFrame);
 
@@ -394,7 +399,7 @@ public class AudioService {
         if (StrUtil.isEmpty(audioPath)) {
             return;
         }
-//        logger.info("删除音频文件及其相关文件,audioPath = {}",audioPath);
+        logger.info("删除音频文件及其相关文件,audioPath = {}",audioPath);
         // 删除原始音频文件
         try {
             Files.deleteIfExists(Paths.get(audioPath));

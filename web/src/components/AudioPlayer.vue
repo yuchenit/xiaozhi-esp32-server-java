@@ -128,7 +128,7 @@ export default {
     loadAudio(url) {
       if (!url) return;
       
-      this.wavesurfer.load(`http://localhost:8092/${url}`);
+      this.wavesurfer.load(`http://localhost:8081/${url}`);
     },
     togglePlay() {
       if (this.loading) return;

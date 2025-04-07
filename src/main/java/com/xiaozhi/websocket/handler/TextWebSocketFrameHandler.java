@@ -251,7 +251,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
         String audioPath = textToSpeechService.textToSpeech(sentence, null, device.getVoiceName());
 
         // 2. 发送音频
-        logger.info("发送音频,sentence={},isStart={},isEnd={}",sentence,isStart,isEnd);
+        logger.info("发送音频,sentence={},isStart={},isEnd={},audioPath={}",sentence,isStart,isEnd,audioPath);
         audioService.sendAudio(ctx.channel(), audioPath, sentence, isStart, isEnd);
       } catch (Exception e) {
         logger.error("处理句子失败: {}", e.getMessage(), e);
