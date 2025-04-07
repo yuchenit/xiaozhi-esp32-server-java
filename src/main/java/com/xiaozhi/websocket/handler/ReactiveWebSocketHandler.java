@@ -8,12 +8,7 @@ import com.xiaozhi.entity.SysDevice;
 import com.xiaozhi.service.SysConfigService;
 import com.xiaozhi.service.SysDeviceService;
 import com.xiaozhi.websocket.llm.LlmManager;
-import com.xiaozhi.websocket.service.AudioService;
-import com.xiaozhi.websocket.service.MessageService;
-import com.xiaozhi.websocket.service.SpeechToTextService;
-import com.xiaozhi.websocket.service.TextToSpeechService;
-import com.xiaozhi.websocket.service.VadService;
-
+import com.xiaozhi.websocket.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +22,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.socket.WebSocketHandler;
 import org.springframework.web.reactive.socket.WebSocketMessage;
 import org.springframework.web.reactive.socket.WebSocketSession;
-
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
@@ -86,7 +79,8 @@ public class ReactiveWebSocketHandler implements WebSocketHandler {
         logger.info(session.getHandshakeInfo().getHeaders().toString());
 
         // 从请求头中获取设备ID
-        String deviceId = session.getHandshakeInfo().getHeaders().getFirst("device-Id");
+        String deviceTmp = session.getHandshakeInfo().getHeaders().getFirst("device-Id");
+        String deviceId = deviceTmp == null ? "web_test_device" : deviceTmp;
         if (deviceId == null) {
             logger.error("设备ID为空");
             return session.close();
@@ -175,8 +169,8 @@ public class ReactiveWebSocketHandler implements WebSocketHandler {
 
             // 对于其他消息类型，需要检查设备是否已绑定
             return Mono.fromCallable(
-                    () -> deviceService
-                            .query(new SysDevice().setDeviceId(device.getDeviceId()).setSessionId(sessionId)))
+                            () -> deviceService
+                                    .query(new SysDevice().setDeviceId(device.getDeviceId()).setSessionId(sessionId)))
                     .subscribeOn(Schedulers.boundedElastic())
                     .flatMap(deviceResult -> {
                         if (deviceResult.isEmpty()) {
@@ -228,14 +222,14 @@ public class ReactiveWebSocketHandler implements WebSocketHandler {
 
         // 使用单个Mono处理音频数据，避免链式调用中的并发问题
         return Mono.fromCallable(() -> {
-            try {
-                // 使用改进的VadService处理音频数据
-                return vadService.processAudio(sessionId, opusData);
-            } catch (Exception e) {
-                logger.error("VAD处理异常: {}", e.getMessage(), e);
-                return null;
-            }
-        })
+                    try {
+                        // 使用改进的VadService处理音频数据
+                        return vadService.processAudio(sessionId, opusData);
+                    } catch (Exception e) {
+                        logger.error("VAD处理异常: {}", e.getMessage(), e);
+                        return null;
+                    }
+                })
                 .subscribeOn(Schedulers.boundedElastic())
                 .flatMap(completeAudio -> {
                     if (completeAudio == null) {
@@ -247,22 +241,22 @@ public class ReactiveWebSocketHandler implements WebSocketHandler {
 
                     // 进行语音识别
                     return Mono.fromCallable(() -> {
-                        String result;
-                        // 调用 SpeechToTextService 进行语音识别
-                        if (!ObjectUtils.isEmpty(sttConfig)) {
-                            result = speechToTextService.recognition(completeAudio, sttConfig);
-                        } else {
-                            String jsonResult = speechToTextService.recognition(completeAudio);
-                            try {
-                                JsonNode resultNode = objectMapper.readTree(jsonResult);
-                                result = resultNode.path("text").asText("");
-                            } catch (Exception e) {
-                                logger.error("解析语音识别结果失败", e);
-                                result = "";
-                            }
-                        }
-                        return result;
-                    })
+                                String result;
+                                // 调用 SpeechToTextService 进行语音识别
+                                if (!ObjectUtils.isEmpty(sttConfig)) {
+                                    result = speechToTextService.recognition(completeAudio, sttConfig);
+                                } else {
+                                    String jsonResult = speechToTextService.recognition(completeAudio);
+                                    try {
+                                        JsonNode resultNode = objectMapper.readTree(jsonResult);
+                                        result = resultNode.path("text").asText("");
+                                    } catch (Exception e) {
+                                        logger.error("解析语音识别结果失败", e);
+                                        result = "";
+                                    }
+                                }
+                                return result;
+                            })
                             .subscribeOn(Schedulers.boundedElastic())
                             .flatMap(recognizedText -> {
                                 if (!StringUtils.hasText(recognizedText)) {
@@ -282,7 +276,7 @@ public class ReactiveWebSocketHandler implements WebSocketHandler {
                                                     (sentence, isStart, isEnd) -> {
                                                         // 为每个句子创建一个独立的响应式流并订阅它
                                                         Mono.fromCallable(() -> textToSpeechService.textToSpeech(
-                                                                sentence, ttsConfig, device.getVoiceName()))
+                                                                        sentence, ttsConfig, device.getVoiceName()))
                                                                 .subscribeOn(Schedulers.boundedElastic())
                                                                 .flatMap(audioPath -> audioService
                                                                         .sendAudioMessage(session, audioPath, sentence,
@@ -323,13 +317,13 @@ public class ReactiveWebSocketHandler implements WebSocketHandler {
     }
 
     private Mono<Void> handleHelloMessage(WebSocketSession session, JsonNode jsonNode) {
-        logger.info("收到hello消息 - SessionId: {}", session.getId());
+        logger.info("收到hello消息 - SessionId: {},JsonNode: {}", session.getId(), jsonNode);
 
         // 验证客户端hello消息
-        if (!jsonNode.path("transport").asText().equals("websocket")) {
+        /*if (!jsonNode.path("transport").asText().equals("websocket")) {
             logger.warn("不支持的传输方式: {}", jsonNode.path("transport").asText());
             return session.close();
-        }
+        }*/
 
         // 解析音频参数
         JsonNode audioParams = jsonNode.path("audio_params");
@@ -345,6 +339,7 @@ public class ReactiveWebSocketHandler implements WebSocketHandler {
         ObjectNode response = objectMapper.createObjectNode();
         response.put("type", "hello");
         response.put("transport", "websocket");
+        response.put("session_id", session.getId());
 
         // 添加音频参数（可以根据服务器配置调整）
         ObjectNode responseAudioParams = response.putObject("audio_params");
@@ -395,7 +390,7 @@ public class ReactiveWebSocketHandler implements WebSocketHandler {
                 return Mono.fromRunnable(() -> {
                     llmManager.chatStreamBySentence(device, text, (sentence, isStart, isEnd) -> {
                         Mono.fromCallable(
-                                () -> textToSpeechService.textToSpeech(sentence, ttsConfig, device.getVoiceName()))
+                                        () -> textToSpeechService.textToSpeech(sentence, ttsConfig, device.getVoiceName()))
                                 .subscribeOn(Schedulers.boundedElastic())
                                 .flatMap(audioPath -> audioService
                                         .sendAudioMessage(session, audioPath, sentence, isStart, isEnd)
