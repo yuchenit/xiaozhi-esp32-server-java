@@ -52,14 +52,26 @@ export default {
           this.wavesurfer.pause();
         }
       });
+
+      // 监听全局停止事件
+      EventBus.$on('stop-all-audio', () => {
+        if (this.wavesurfer && this.isPlaying) {
+          this.wavesurfer.pause();
+        }
+    });
     });
   },
   beforeDestroy() {
     if (this.wavesurfer) {
+      // 在销毁前确保先暂停音频播放
+      if (this.isPlaying) {
+        this.wavesurfer.pause();
+    }
       this.wavesurfer.destroy();
     }
     // 移除事件监听
-    EventBus.$off('audio-play', this.handleOtherPlayerPlay);
+    EventBus.$off('audio-play');
+    EventBus.$off('stop-all-audio');
   },
   watch: {
     audioUrl: {

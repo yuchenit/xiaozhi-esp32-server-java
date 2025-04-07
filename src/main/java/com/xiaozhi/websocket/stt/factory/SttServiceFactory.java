@@ -5,38 +5,56 @@ import com.xiaozhi.websocket.stt.SttService;
 import com.xiaozhi.websocket.stt.providers.AliyunSttService;
 import com.xiaozhi.websocket.stt.providers.TencentSttService;
 import com.xiaozhi.websocket.stt.providers.VoskSttService;
-
+import com.xiaozhi.websocket.token.TokenManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class SttServiceFactory {
 
-  private static final Logger logger = LoggerFactory.getLogger(SttServiceFactory.class);
+    private static final Logger logger = LoggerFactory.getLogger(SttServiceFactory.class);
 
-  // 缓存已初始化的服务
-  private final Map<String, SttService> serviceCache = new ConcurrentHashMap<>();
+  // 缓存已初始化的服务：对于API服务，键为"provider:configId"格式；对于本地服务，键为provider名称
+    private final Map<String, SttService> serviceCache = new ConcurrentHashMap<>();
 
-  // 默认服务提供商名称
-  private static final String DEFAULT_PROVIDER = "vosk";
+    // 默认服务提供商名称
+    private static final String DEFAULT_PROVIDER = "vosk";
 
-  // 标记Vosk是否初始化成功
-  private boolean voskInitialized = false;
+    // 标记Vosk是否初始化成功
+    private boolean voskInitialized = false;
 
-  // 备选默认提供商（当Vosk初始化失败时使用）
-  private String fallbackProvider = null;
+    // 备选默认提供商（当Vosk初始化失败时使用）
+    private String fallbackProvider = null;
 
-  /**
-   * 初始化Vosk服务（仅在第一次需要时）
-   */
+    // 注入TokenManager
+    @Autowired
+    private TokenManager tokenManager;
+    /**
+   * 应用启动时自动初始化Vosk服务
+     */
+  @PostConstruct
+  public void initializeDefaultSttService() {
+    logger.info("正在初始化默认语音识别服务(Vosk)...");
+            initializeVosk();
+        if (voskInitialized) {
+      logger.info("默认语音识别服务(Vosk)初始化成功，可直接使用");
+            } else {
+      logger.warn("默认语音识别服务(Vosk)初始化失败，将在需要时尝试使用备选服务");
+    }
+  }
+    /**
+   * 初始化Vosk服务
+     */
   private synchronized void initializeVosk() {
     if (serviceCache.containsKey(DEFAULT_PROVIDER)) {
       return;
-    }
+        }
 
     try {
       VoskSttService voskService = new VoskSttService();
@@ -55,13 +73,8 @@ public class SttServiceFactory {
    * 如果Vosk可用则返回Vosk，否则返回备选服务
    */
   public SttService getDefaultSttService() {
-    // 如果Vosk尚未尝试初始化，则初始化
-    if (!serviceCache.containsKey(DEFAULT_PROVIDER) && !voskInitialized) {
-      initializeVosk();
-    }
-
-    // 如果Vosk初始化成功，返回Vosk
-    if (voskInitialized) {
+    // 如果Vosk已初始化成功，直接返回
+    if (voskInitialized && serviceCache.containsKey(DEFAULT_PROVIDER)) {
       return serviceCache.get(DEFAULT_PROVIDER);
     }
 
@@ -78,8 +91,8 @@ public class SttServiceFactory {
       } catch (Exception e) {
         logger.error("创建默认API服务失败", e);
         return null;
-      }
     }
+}
 
     return null;
   }
@@ -93,48 +106,47 @@ public class SttServiceFactory {
     }
 
     String provider = config.getProvider();
-
-    // 如果是Vosk且尚未初始化，则初始化
-    if (DEFAULT_PROVIDER.equals(provider) && !serviceCache.containsKey(provider) && !voskInitialized) {
-      initializeVosk();
-    }
-
-    // 检查是否已有该提供商的服务实例
-    if (serviceCache.containsKey(provider)) {
-      SttService existingService = serviceCache.get(provider);
-      // 如果是API服务，可能需要更新配置
-      if (!(existingService instanceof VoskSttService)) {
-        // 更新API服务配置
+    
+    // 如果是Vosk，直接使用全局共享的实例
+    if (DEFAULT_PROVIDER.equals(provider)) {
+      // 如果Vosk还未初始化，尝试初始化
+      if (!voskInitialized && !serviceCache.containsKey(DEFAULT_PROVIDER)) {
+        initializeVosk();
       }
-      return existingService;
+      
+      // Vosk初始化失败的情况
+      if (!voskInitialized) {
+        return null;
+      }
+      return serviceCache.get(DEFAULT_PROVIDER);
+    }
+    
+    // 对于API服务，使用"provider:configId"作为缓存键，确保每个配置使用独立的服务实例
+    Integer configId = config.getConfigId();
+    String cacheKey = provider + ":" + (configId != null ? configId : "default");
+
+    // 检查是否已有该配置的服务实例
+    if (serviceCache.containsKey(cacheKey)) {
+      return serviceCache.get(cacheKey);
     }
 
-    // 创建新的服务实例
+    // 创建新的API服务实例
     try {
-      SttService service;
-      if (DEFAULT_PROVIDER.equals(provider)) {
-        // Vosk初始化失败的情况已在前面处理
-        if (!voskInitialized) {
-          return null;
-        }
-        service = serviceCache.get(DEFAULT_PROVIDER);
-      } else {
-        // 创建API服务
-        service = createApiService(config);
-        if (service != null) {
-          serviceCache.put(provider, service);
+      SttService service = createApiService(config);
+      if (service != null) {
+        serviceCache.put(cacheKey, service);
 
-          // 如果没有备选默认服务，将此服务设为备选
-          if (fallbackProvider == null) {
-            fallbackProvider = provider;
-          }
+        // 如果没有备选默认服务，将此服务设为备选
+        if (fallbackProvider == null) {
+          fallbackProvider = cacheKey;
         }
+        return service;
       }
-      return service;
     } catch (Exception e) {
-      logger.error("创建{}服务失败", provider, e);
-      return null;
+      logger.error("创建{}服务失败, configId={}", provider, configId, e);
     }
+    
+    return null;
   }
 
   /**
@@ -151,7 +163,10 @@ public class SttServiceFactory {
     if ("tencent".equals(provider)) {
       return new TencentSttService(config);
     } else if ("aliyun".equals(provider)) {
-      return new AliyunSttService(config);
+      // 创建阿里云TTS服务并设置TokenManager
+      AliyunSttService aliyunSttService = new AliyunSttService(config);
+      aliyunSttService.setTokenManager(tokenManager);
+      return aliyunSttService;
     }
     // 可以添加其他服务提供商的支持
 

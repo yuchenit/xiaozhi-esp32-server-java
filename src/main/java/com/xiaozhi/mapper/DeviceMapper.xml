@@ -40,7 +40,7 @@
             <if test="userId != null and userId != ''">AND sys_device.userId = #{userId}</if>
             <if test="deviceId != null and deviceId != ''">AND deviceId = #{deviceId}</if>
             <if test="deviceName != null and deviceName != ''">AND deviceName LIKE CONCAT('%', #{deviceName}, '%')</if>
-            <if test="state != null and state != ''">AND state = #{state}</if>
+            <if test="state != null and state != ''">AND sys_device.state = #{state}</if>
     </select>
 
     <select id="queryVerifyCode" parameterType="com.xiaozhi.entity.SysDevice" resultType="com.xiaozhi.entity.SysDevice">

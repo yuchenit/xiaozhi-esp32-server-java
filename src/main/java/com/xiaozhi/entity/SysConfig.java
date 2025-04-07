@@ -11,6 +11,10 @@ public class SysConfig extends Base {
 
     private Integer userId;
 
+    private String deviceId;
+
+    private Integer roleId;
+
     /**
      * 配置名称
      */
@@ -49,6 +53,24 @@ public class SysConfig extends Base {
 
     public SysConfig setUserId(Integer userId) {
         this.userId = userId;
+        return this;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public SysConfig setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
+        return this;
+    }
+
+    public Integer getRoleId() {
+        return roleId;
+    }
+
+    public SysConfig setRoleId(Integer roleId) {
+        this.roleId = roleId;
         return this;
     }
 

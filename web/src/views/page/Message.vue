@@ -69,6 +69,7 @@ import axios from "@/services/axios";
 import api from "@/services/api";
 import mixin from "@/mixins/index";
 import AudioPlayer from "@/components/AudioPlayer.vue";
+import EventBus from "@/utils/eventBus";
 
 export default {
   mixins: [mixin],
@@ -174,6 +175,15 @@ export default {
   },
   mounted() {
     this.getData();
+  },
+  beforeRouteLeave(to, from, next) {
+    // 在路由离开前触发全局事件，通知所有音频播放器停止播放
+    EventBus.$emit('stop-all-audio');
+    next();
+  },
+  beforeDestroy() {
+    // 在组件销毁前触发全局事件，通知所有音频播放器停止播放
+    EventBus.$emit('stop-all-audio');
   },
   methods: {
     /* 查询参数列表 */
