@@ -3,6 +3,7 @@ package com.xiaozhi.common.config;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -21,16 +22,6 @@ public class ThreadPoolConfig {
                 new LinkedBlockingQueue<>(100), // 任务队列
                 new CustomThreadFactory("base-pool"), // 自定义线程工厂
                 new ThreadPoolExecutor.CallerRunsPolicy() // 拒绝策略
-        );
-    }
-
-    // 音频服务专用线程池（新增）
-    @Bean(name = "audioScheduledExecutor")
-    public ScheduledExecutorService audioScheduledExecutor() {
-        return new ScheduledThreadPoolExecutor(
-                Runtime.getRuntime().availableProcessors(),
-                new CustomThreadFactory("audio-sender", true), // 设置为守护线程
-                new ThreadPoolExecutor.DiscardOldestPolicy() // 更适合音频场景的拒绝策略
         );
     }
 
@@ -65,13 +56,13 @@ public class ThreadPoolConfig {
 
         @Override
         public Thread newThread(@NotNull Runnable r) {
-            Thread t = new Thread(SECURITY_MANAGER == null ? 
-                    Thread.currentThread().getThreadGroup() : 
+            Thread t = new Thread(SECURITY_MANAGER == null ?
+                    Thread.currentThread().getThreadGroup() :
                     SECURITY_MANAGER.getThreadGroup(),
                     r,
                     namePrefix + threadNumber.getAndIncrement(),
                     0);
-            
+
             t.setDaemon(daemon);
             // 设置合理的默认优先级
             if (t.getPriority() != Thread.NORM_PRIORITY) {

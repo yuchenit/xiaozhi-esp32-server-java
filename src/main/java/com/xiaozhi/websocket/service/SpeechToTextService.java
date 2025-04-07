@@ -59,14 +59,14 @@ public class SpeechToTextService {
       return null;
     }
 
-    // 尝试获取默认服务（可能是Vosk或备选服务）
-    SttService sttService = sttServiceFactory.getDefaultSttService();
+    // 获取STT服务
+    SttService sttService = sttServiceFactory.getSttService(null);
     if (sttService == null) {
-      logger.error("无法获取默认STT服务");
+      logger.error("无法获取STT服务");
       return null;
     }
 
-    logger.info("使用默认STT服务: {}", sttService.getProviderName());
+    logger.info("使用STT服务: {}", sttService.getProviderName());
     long startTime = System.currentTimeMillis(); // 记录开始时间
     String result = sttService.recognition(audioData);
     long endTime = System.currentTimeMillis();
