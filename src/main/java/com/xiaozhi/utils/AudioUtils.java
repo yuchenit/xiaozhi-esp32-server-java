@@ -4,12 +4,10 @@ import cn.hutool.core.io.FileUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.bytedeco.ffmpeg.global.avcodec;
 import org.bytedeco.ffmpeg.global.avutil;
-import org.bytedeco.javacpp.Loader;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.FFmpegFrameRecorder;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameRecorder;
-import org.slf4j.Logger;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -271,7 +269,7 @@ public class AudioUtils {
                 recorder.setSampleRate(sampleRate);
                 recorder.setAudioCodec(avcodec.AV_CODEC_ID_MP3);
                 recorder.setAudioQuality(2);
-                recorder.setFormat("mp3");
+                recorder.setFormat(outputFormat);
                 recorder.start();
 
                 // 转换并写入音频帧

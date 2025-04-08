@@ -61,9 +61,9 @@ public class EdgeTtsService implements TtsService {
                 .trans();
 
         // 2. 转换原始MP3为指定采样率和通道数的MP3
-//        edgeTtsMp3ByCmd(outputPath + audioFilePath, 16000, 1);
+        //ttsEdgeMp3Cmd(outputPath + audioFilePath, 16000, 1);
         AudioUtils.ttsEdgeMp3(outputPath + audioFilePath,
-                "libmp3lame",16000,1);
+                "mp3",16000,1);
         return outputPath + audioFilePath;
     }
     

@@ -256,23 +256,26 @@ public class AudioService {
         String sessionId = channel.attr(SESSION_ID).get();
         // 确保会话已初始化
         initializeSession(sessionId);
-        // 异步预处理音频
-        baseThreadPool.submit(() -> {
-            try {
-                // 预处理音频文件
-                AudioProcessResult result = processAudioFile(audioFilePath,
-                        DEFAULT_SAMPLE_RATE, DEFAULT_CHANNELS);
 
-                // 创建已处理的音频任务
-                ProcessedAudioTask task = new ProcessedAudioTask(
-                        result.getOpusFrames(),
-                        text,
-                        isFirstText,
-                        isLastText,
-                        audioFilePath);
+        // 单线程保证按流式返回顺序入队列
+        try {
+            // 预处理音频文件
+            AudioProcessResult result = processAudioFile(audioFilePath,
+                    DEFAULT_SAMPLE_RATE, DEFAULT_CHANNELS);
 
-                // 添加到发送队列
-                audioQueues.get(sessionId).add(task);
+            // 创建已处理的音频任务
+            ProcessedAudioTask task = new ProcessedAudioTask(
+                    result.getOpusFrames(),
+                    text,
+                    isFirstText,
+                    isLastText,
+                    audioFilePath);
+
+            // 添加到发送队列
+            audioQueues.get(sessionId).add(task);
+
+            // 按顺序入队列之后,异步发送语音
+            baseThreadPool.execute(()->{
                 if (isFirstText) {
                     sendStart(channel);
                 }
@@ -280,12 +283,12 @@ public class AudioService {
                 if (isProcessingMap.get(sessionId).compareAndSet(false, true)) {
                     processNextAudio(channel);
                 }
-            } catch (Exception e) {
-                logger.error("音频预处理失败,终止发送,清理当前任务资源: {}", e.getMessage(), e);
-                // 处理失败时，尝试清理会话
-                cleanupSession(sessionId);
-            }
-        });
+            });
+        } catch (Exception e) {
+            logger.error("音频预处理失败,终止发送,清理当前任务资源: {}", e.getMessage(), e);
+            // 处理失败时，尝试清理会话
+            cleanupSession(sessionId);
+        }
     }
 
     /**

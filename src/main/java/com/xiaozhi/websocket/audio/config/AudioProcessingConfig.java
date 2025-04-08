@@ -24,8 +24,10 @@ public class AudioProcessingConfig {
             sileroVadDetector.setEnableNoiseReduction(true);
 
             // 配置TarsosDSP降噪参数
-            tarsosNoiseReducer.setSpectralSubtractionFactor(1.5);
-            tarsosNoiseReducer.setNoiseEstimationFrames(15);
+            // 频谱减法因子: 通常在0到2之间。值越大，降噪效果越强.
+            // 噪声估计帧数: 这个参数决定了用于估计背景噪声的帧数
+            tarsosNoiseReducer.setSpectralSubtractionFactor(1);
+            tarsosNoiseReducer.setNoiseEstimationFrames(10);
         }
     }
 }

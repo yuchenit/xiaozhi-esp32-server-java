@@ -1,16 +1,11 @@
 package com.xiaozhi.websocket.stt.providers;
 
-import cn.hutool.extra.spring.SpringUtil;
 import com.xiaozhi.utils.AudioUtils;
 import com.xiaozhi.websocket.stt.SttService;
-import io.netty.util.concurrent.Future;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.vosk.LibVosk;
 import org.vosk.LogLevel;
@@ -23,7 +18,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.*;
-import java.util.concurrent.locks.ReentrantLock;
 
 @Slf4j
 @Service
@@ -123,29 +117,46 @@ public class VoskSttService implements SttService {
             log.warn("Received empty audio data");
             return null;
         }
-        baseThreadPool.execute(()->{
-            // 将原始音频数据转换为MP3格式并保存
-            AudioUtils.saveAsMp3File(audioData);
-        });
+        // 将原始音频数据转换为MP3格式并保存
+        CompletableFuture<Void> savingFuture  = CompletableFuture.runAsync(() ->
+                AudioUtils.saveAsMp3File(audioData),
+                baseThreadPool);
 
-        try (Recognizer recognizer = new Recognizer(model, 16000)) {
-            return processAudio(recognizer, audioData);
-        } catch (IOException e) {
-            throw new AudioProcessingException("Audio processing failed", e);
+        CompletableFuture<String> processAudioFuture = CompletableFuture.supplyAsync(() -> processAudio(audioData),
+                baseThreadPool);
+
+        // 等待两个任务都完成
+        CompletableFuture<Void> allFutures = CompletableFuture.allOf(processAudioFuture, savingFuture);
+        try {
+            allFutures.get(); // 等待两个任务完成
+            log.info("STT tasks completed.");
+            return processAudioFuture.get();
+        } catch (InterruptedException | ExecutionException e) {
+            log.error("处理音频时发生错误！", e);
+            return null;
         }
     }
 
-    private String processAudio(Recognizer recognizer, byte[] audioData) throws IOException {
-        try (ByteArrayInputStream stream = new ByteArrayInputStream(audioData)) {
+    /**
+     * 语音转文本
+     * @param audioData 语音流
+     **/
+    private String processAudio(byte[] audioData) {
+        try (Recognizer recognizer = new Recognizer(model, 16000);
+             ByteArrayInputStream stream = new ByteArrayInputStream(audioData)) {
             byte[] buffer = new byte[4096];
             int bytesRead;
             
             while ((bytesRead = stream.read(buffer)) != -1) {
                 if (recognizer.acceptWaveForm(buffer, bytesRead)) {
-                    return recognizer.getResult();
+                    // 如果识别到完整的结果
+                    return recognizer.getResult().replaceAll("\\s+", "");
                 }
             }
-            return recognizer.getFinalResult();
+            return recognizer.getFinalResult().replaceAll("\\s+", "");
+        }catch (IOException e) {
+            log.error("处理音频时发生错误！", e);
+            return null;
         }
     }
 
