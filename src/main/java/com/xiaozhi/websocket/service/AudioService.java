@@ -400,7 +400,7 @@ public class AudioService {
         if (StrUtil.isEmpty(audioPath)) {
             return;
         }
-        logger.info("删除音频文件及其相关文件,audioPath = {}",audioPath);
+        //logger.info("删除音频文件及其相关文件,audioPath = {}",audioPath);
         // 删除原始音频文件
         try {
             Files.deleteIfExists(Paths.get(audioPath));
